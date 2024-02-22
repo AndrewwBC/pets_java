@@ -1,5 +1,7 @@
 package com.example.pets4ever.controllers;
 
+import com.example.pets4ever.Infra.Security.TokenService;
+import com.example.pets4ever.domain.user.LoginResponseDTO;
 import com.example.pets4ever.domain.user.RegisterDTO;
 import com.example.pets4ever.domain.user.UserAuthDTO;
 import com.example.pets4ever.domain.user.User;
@@ -25,15 +27,17 @@ public class AuthenticationController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    TokenService tokenService;
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserAuthDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.name(), data.password());
         System.out.println(usernamePassword);
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        System.out.println(auth);
+        var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
