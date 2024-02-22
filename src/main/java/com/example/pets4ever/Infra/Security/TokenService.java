@@ -9,5 +9,4 @@ public class TokenService {
     public String generateToken(UserModel user){}
 
 
-
 }

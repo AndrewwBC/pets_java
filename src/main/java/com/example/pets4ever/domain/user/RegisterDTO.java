@@ -1,4 +1,4 @@
-package com.example.pets4ever.Model;
+package com.example.pets4ever.domain.user;
 
 public record RegisterDTO(String name, String password, UserRole role) {
 }

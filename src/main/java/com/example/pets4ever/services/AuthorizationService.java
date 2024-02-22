@@ -1,6 +1,6 @@
-package com.example.pets4ever.Services;
+package com.example.pets4ever.services;
 
-import com.example.pets4ever.Repository.UserRepository;
+import com.example.pets4ever.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
