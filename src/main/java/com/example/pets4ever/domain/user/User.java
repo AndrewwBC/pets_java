@@ -27,12 +27,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String name;
+    private String email;
     private String password;
     private UserRole role;
 
-
-    public User(String name, String password, UserRole role) {
+    public User(String name, String email, String password, UserRole role) {
         this.name = name;
+        this.email = email;
         this.password = password;
         this.role = role;
     }

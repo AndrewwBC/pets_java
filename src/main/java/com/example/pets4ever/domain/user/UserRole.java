@@ -1,6 +1,7 @@
 package com.example.pets4ever.domain.user;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public enum UserRole {
