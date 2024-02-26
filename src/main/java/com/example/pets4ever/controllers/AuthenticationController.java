@@ -29,16 +29,13 @@ public class AuthenticationController {
 
     @Value("${ADM_MAIL}")
     private String admMail;
-
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     TokenService tokenService;
     private UserRole userRole;
-
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserAuthDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.name(), data.password());
@@ -58,17 +55,10 @@ public class AuthenticationController {
         if(this.userRepository.findByName(data.name()) != null) {
             registerErrors.add(new RegisterError("username", "Nome de usuário já cadastrado!"));
         }
+
         if (this.userRepository.findByEmail(data.email()) != null) {
             registerErrors.add(new RegisterError("email", "Email já cadastrado!"));
         };
-
-        if(data.email().matches("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")){
-            registerErrors.add(new RegisterError("email", "Email inválido!"));
-        }
-
-        if(data.password().isEmpty()) {
-            registerErrors.add(new RegisterError("password", "Senha deve ter ao menos seis caractéres!"));
-        }
 
         if(!registerErrors.isEmpty()){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(registerErrors);
@@ -80,10 +70,17 @@ public class AuthenticationController {
             this.userRole = UserRole.USER;
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.name(), data.email(), encryptedPassword, this.userRole);
+        if(data.password().isEmpty()) {
+            User newUser = new User(data.name(), data.email(), data.password(), this.userRole);
 
-        this.userRepository.save(newUser);
+            this.userRepository.save(newUser);
+
+        } else {
+            String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
+            User newUser = new User(data.name(), data.email(), encryptedPassword, this.userRole);
+
+            this.userRepository.save(newUser);
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body("CADASTRO REALIZADO COM SUCESSO!");
     }

@@ -1,5 +1,6 @@
 package com.example.pets4ever.controllers.exception;
 
+import com.example.pets4ever.controllers.error.RegisterError;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,12 @@ public class CustomResponseEntityExceptionHandler {
     @ExceptionHandler
     public ResponseEntity handle(ConstraintViolationException exception) {
 
-        List<String> messages =  new ArrayList<>();
+        List<RegisterError> messages =  new ArrayList<>();
 
         exception.getConstraintViolations().forEach(constraintViolation -> {
             System.out.println(constraintViolation.getMessage());
-            messages.add(constraintViolation.getMessage());
+            messages.add(new RegisterError(constraintViolation.getPropertyPath().toString()
+                    ,constraintViolation.getMessage()));
         });
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(messages);

@@ -42,7 +42,6 @@ public class User implements UserDetails {
     private String email;
 
     @Length(min = 6, message = "Senha com ao menos seis caractéres!")
-    @NotEmpty(message = "Senha deve ser preenchida")
     private String password;
     private UserRole role;
 
