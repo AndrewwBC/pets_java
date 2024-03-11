@@ -7,7 +7,7 @@ import com.example.pets4ever.domain.user.UserAuthDTO;
 import com.example.pets4ever.domain.user.User;
 import com.example.pets4ever.repositories.UserRepository;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.pets4ever.controllers.error.RegisterError;
 import com.example.pets4ever.domain.user.*;
@@ -17,10 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
