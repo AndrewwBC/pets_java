@@ -7,6 +7,7 @@ import com.example.pets4ever.domain.user.UserAuthDTO;
 import com.example.pets4ever.domain.user.User;
 import com.example.pets4ever.repositories.UserRepository;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.pets4ever.controllers.error.RegisterError;
 import com.example.pets4ever.domain.user.*;
@@ -37,7 +38,7 @@ public class AuthenticationController {
     TokenService tokenService;
     private UserRole userRole;
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid UserAuthDTO data) {
+    public ResponseEntity<Object> login(@RequestBody @Valid UserAuthDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.name(), data.password());
         System.out.println(usernamePassword);
         var auth = this.authenticationManager.authenticate(usernamePassword);
@@ -48,7 +49,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO data) {
+    public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
 
         List<RegisterError> registerErrors = new ArrayList<>();
 
