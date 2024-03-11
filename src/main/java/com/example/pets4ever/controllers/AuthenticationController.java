@@ -56,11 +56,9 @@ public class AuthenticationController {
         if(this.userRepository.findByName(data.name()) != null) {
             registerErrors.add(new RegisterError("username", "Nome de usuário já cadastrado!"));
         }
-
         if (this.userRepository.findByEmail(data.email()) != null) {
             registerErrors.add(new RegisterError("email", "Email já cadastrado!"));
         };
-
         if(!registerErrors.isEmpty()){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(registerErrors);
         }
@@ -73,13 +71,10 @@ public class AuthenticationController {
 
         if(data.password().isEmpty()) {
             User newUser = new User(data.name(), data.email(), data.password(), this.userRole);
-
             this.userRepository.save(newUser);
-
         } else {
             String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
             User newUser = new User(data.name(), data.email(), encryptedPassword, this.userRole);
-
             this.userRepository.save(newUser);
         }
 

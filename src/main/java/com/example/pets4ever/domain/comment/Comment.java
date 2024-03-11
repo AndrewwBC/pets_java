@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Comment {
+public class  Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
