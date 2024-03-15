@@ -13,10 +13,12 @@ public class EmailService {
 
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("petsmail.tsi@gmail.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
-        message.setFrom("petsmail.tsi@gmail.com");
+
         emailSender.send(message);
+
     }
 }
