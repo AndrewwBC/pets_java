@@ -19,13 +19,15 @@ public class TokenService {
     private String secret;
 
     public String generateToken(User user){
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+        Algorithm algorithm = Algorithm.HMAC256(this.secret);
+
         try {
             String token = JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getId())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
+
             return token;
         }
         catch (JWTCreationException exception) {
@@ -34,14 +36,16 @@ public class TokenService {
 
     }
 
-    public String validateToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+    public String validateTokenAndGetUserId(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(this.secret);
+
         try {
             return JWT.require(algorithm)
                     .withIssuer("auth-api")
                     .build()
                     .verify(token)
                     .getSubject();
+
         } catch (JWTVerificationException exception){
             return "";
         }

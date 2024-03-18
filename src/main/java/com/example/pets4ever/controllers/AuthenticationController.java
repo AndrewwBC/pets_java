@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
@@ -36,8 +37,8 @@ public class AuthenticationController {
     private UserRole userRole;
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Valid UserAuthDTO data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.name(), data.password());
-        System.out.println(usernamePassword);
+
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
         var token = tokenService.generateToken((User) auth.getPrincipal());
