@@ -2,7 +2,9 @@ package com.example.pets4ever.domain.user;
 
 
 import com.example.pets4ever.controllers.error.RegisterError;
+import com.example.pets4ever.domain.comment.Comment;
 import com.example.pets4ever.domain.post.Post;
+import com.example.pets4ever.domain.storie.Storie;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-@Entity(name = "users")
+@Entity(name = "Users")
 @Table(name = "users")
 @Data
 @NoArgsConstructor
@@ -38,6 +40,21 @@ public class User implements UserDetails {
     @Length(min = 6, message = "Senha com ao menos seis caractéres!")
     private String password;
     private UserRole role;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "likes", fetch = FetchType.LAZY)
+    private List<Post> userLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<User> followers = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<User> following = new ArrayList<>();
 
     public User(String name, String email, String password, UserRole role) {
         this.name = name;

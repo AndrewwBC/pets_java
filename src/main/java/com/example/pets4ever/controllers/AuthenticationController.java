@@ -52,7 +52,7 @@ public class AuthenticationController {
         List<RegisterError> registerErrors = new ArrayList<>();
 
         if(this.userRepository.findByName(data.name()) != null) {
-            registerErrors.add(new RegisterError("username", "Nome de usuário já cadastrado!"));
+            registerErrors.add(new RegisterError( "username", "Nome de usuário já cadastrado!"));
         }
         if (this.userRepository.findByEmail(data.email()) != null) {
             registerErrors.add(new RegisterError("email", "Email já cadastrado!"));
