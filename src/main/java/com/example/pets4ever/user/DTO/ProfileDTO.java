@@ -1,4 +1,4 @@
-package com.example.pets4ever.controllers.user.DTO;
+package com.example.pets4ever.user.DTO;
 
 
 import lombok.Getter;
@@ -14,6 +14,4 @@ public class ProfileDTO {
         this.id = id;
         this.username = username;
     }
-
-
 }

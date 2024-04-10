@@ -1,8 +1,8 @@
-package com.example.pets4ever.Infra.Security;
+package com.example.pets4ever.Infra;
 
 
-import com.example.pets4ever.domain.user.User;
-import com.example.pets4ever.repositories.UserRepository;
+import com.example.pets4ever.user.User;
+import com.example.pets4ever.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,8 +32,9 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(token != null) {
             String subject = tokenService.validateTokenAndGetUserId(token);
 
+            System.out.println("Antes do findById");
             Optional<User> user =  userRepository.findById(subject);
-
+            System.out.println("Depois do findById");
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.get().getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

@@ -1,7 +1,8 @@
 package com.example.pets4ever.services;
 
-import com.example.pets4ever.repositories.UserRepository;
+import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

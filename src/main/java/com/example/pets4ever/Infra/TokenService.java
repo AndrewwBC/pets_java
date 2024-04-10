@@ -1,10 +1,10 @@
-package com.example.pets4ever.Infra.Security;
+package com.example.pets4ever.Infra;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.pets4ever.domain.user.User;
+import com.example.pets4ever.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

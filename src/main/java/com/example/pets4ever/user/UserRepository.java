@@ -1,6 +1,6 @@
-package com.example.pets4ever.repositories;
+package com.example.pets4ever.user;
 
-import com.example.pets4ever.domain.user.User;
+import com.example.pets4ever.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 

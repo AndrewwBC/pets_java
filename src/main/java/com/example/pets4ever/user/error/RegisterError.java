@@ -1,4 +1,4 @@
-package com.example.pets4ever.controllers.error;
+package com.example.pets4ever.user.error;
 
 
 import lombok.Getter;

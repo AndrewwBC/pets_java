@@ -1,8 +1,8 @@
-package com.example.pets4ever.domain.post;
+package com.example.pets4ever.post;
 
 
-import com.example.pets4ever.domain.comment.Comment;
-import com.example.pets4ever.domain.user.User;
+import com.example.pets4ever.comment.Comment;
+import com.example.pets4ever.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="post_tipo", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name="isStorie", discriminatorType = DiscriminatorType.STRING)
 
 public class Post {
     @Id

@@ -1,10 +1,8 @@
-package com.example.pets4ever.controllers.user;
+package com.example.pets4ever.user;
 
 
-import com.example.pets4ever.Infra.Security.TokenService;
-import com.example.pets4ever.controllers.user.DTO.ProfileDTO;
-import com.example.pets4ever.domain.user.User;
-import com.example.pets4ever.repositories.UserRepository;
+import com.example.pets4ever.Infra.TokenService;
+import com.example.pets4ever.user.DTO.ProfileDTO;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,6 +27,7 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity getUserData(@RequestHeader("Authorization") String bearerToken) {
 
+        System.out.println(bearerToken);
         String token = recoverTokenFromHeaderWithoutBearer.token(bearerToken);
         String userId = tokenService.validateTokenAndGetUserId(token);
 

@@ -1,6 +1,6 @@
 package com.example.pets4ever.controllers.exception;
 
-import com.example.pets4ever.controllers.error.RegisterError;
+import com.example.pets4ever.user.error.RegisterError;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

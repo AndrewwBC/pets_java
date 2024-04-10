@@ -1,8 +1,8 @@
-package com.example.pets4ever.domain.comment;
+package com.example.pets4ever.comment;
 
 
-import com.example.pets4ever.domain.post.Post;
-import com.example.pets4ever.domain.user.User;
+import com.example.pets4ever.post.Post;
+import com.example.pets4ever.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.example.pets4ever.Infra.Security;
+package com.example.pets4ever.Infra;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

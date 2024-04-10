@@ -1,4 +1,4 @@
-package com.example.pets4ever.Infra.Security;
+package com.example.pets4ever.Infra;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

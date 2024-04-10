@@ -1,16 +1,15 @@
 package com.example.pets4ever.controllers;
 
-import com.example.pets4ever.Infra.Security.TokenService;
-import com.example.pets4ever.domain.user.LoginResponseDTO;
-import com.example.pets4ever.domain.user.RegisterDTO;
-import com.example.pets4ever.domain.user.UserAuthDTO;
-import com.example.pets4ever.domain.user.User;
-import com.example.pets4ever.repositories.UserRepository;
+import com.example.pets4ever.Infra.TokenService;
+import com.example.pets4ever.user.*;
+import com.example.pets4ever.user.DTO.LoginResponseDTO;
+import com.example.pets4ever.user.DTO.RegisterDTO;
+import com.example.pets4ever.user.DTO.UserAuthDTO;
+import com.example.pets4ever.user.UserRepository;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.pets4ever.controllers.error.RegisterError;
-import com.example.pets4ever.domain.user.*;
+import com.example.pets4ever.user.error.RegisterError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
