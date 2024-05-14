@@ -35,7 +35,6 @@ public class TokenService {
         }
 
     }
-
     public String validateTokenAndGetUserId(String token) {
         Algorithm algorithm = Algorithm.HMAC256(this.secret);
 

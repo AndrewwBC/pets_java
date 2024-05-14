@@ -2,6 +2,7 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.Infra.TokenService;
 import com.example.pets4ever.user.DTO.*;
+import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import jakarta.validation.Valid;
 
@@ -23,6 +24,8 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
+    GetUserIdFromToken getUserIdFromToken;
+    @Autowired
     TokenService tokenService;
     @Autowired
     UserServices userServices;
@@ -43,8 +46,8 @@ public class AuthenticationController {
     public ResponseEntity profile(@RequestHeader("Authorization") String bearerToken) {
 
         System.out.println(bearerToken);
-        String token = recoverTokenFromHeaderWithoutBearer.token(bearerToken);
-        String userId = tokenService.validateTokenAndGetUserId(token);
+
+        String userId = getUserIdFromToken.userId(bearerToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(userServices.profile(userId));
     }
@@ -52,8 +55,7 @@ public class AuthenticationController {
     @PutMapping("/update")
     public ResponseEntity<User> update(@RequestHeader("Authorization") String bearerToken, @RequestBody UpdateDTO updateDTO){
 
-        String token = recoverTokenFromHeaderWithoutBearer.token(bearerToken);
-        String userId = tokenService.validateTokenAndGetUserId(token);
+        String userId = getUserIdFromToken.userId(bearerToken);
 
         User userUpdated = userServices.update(updateDTO, userId);
 
@@ -63,8 +65,7 @@ public class AuthenticationController {
     @DeleteMapping("/delete")
     public ResponseEntity<User> delete(@RequestHeader("Authorization") String bearerToken){
 
-        String token = recoverTokenFromHeaderWithoutBearer.token(bearerToken);
-        String userId = tokenService.validateTokenAndGetUserId(token);
+        String userId = getUserIdFromToken.userId(bearerToken);
 
         System.out.println(userId);
 

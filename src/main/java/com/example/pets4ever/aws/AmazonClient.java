@@ -66,12 +66,12 @@ public class AmazonClient {
             fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
             uploadFileTos3bucket(fileName, file);
 
-            System.out.println(file);
+            System.out.println(fileUrl);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fileName;
+        return fileUrl;
     }
 
     public String deleteFileFromS3Bucket(String fileName) {

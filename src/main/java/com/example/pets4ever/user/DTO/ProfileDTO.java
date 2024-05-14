@@ -6,7 +6,6 @@ import com.example.pets4ever.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.awt.*;
 import java.util.List;
 
 @Setter
