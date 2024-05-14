@@ -65,7 +65,8 @@ public class AmazonClient {
             File file = convertMultiPartToFile(multipartFile);
             fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
             uploadFileTos3bucket(fileName, file);
-            file.delete();
+
+            System.out.println(file);
 
         } catch (Exception e) {
             e.printStackTrace();

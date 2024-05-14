@@ -31,13 +31,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if(token != null) {
             String subject = tokenService.validateTokenAndGetUserId(token);
-
-            System.out.println("Antes do findById");
             Optional<User> user =  userRepository.findById(subject);
-            System.out.println("Depois do findById");
+
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.get().getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
         }
         filterChain.doFilter(request, response);
     }

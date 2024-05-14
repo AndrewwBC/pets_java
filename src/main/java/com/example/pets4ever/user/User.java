@@ -37,6 +37,7 @@ public class User implements UserDetails {
     @Length(min = 1, message = "Nome de usuário com ao menos um caractér!")
     private String name;
 
+    @Column(unique = true)
     @Email(message = "Email inválido!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotEmpty(message = "Email deve ser preenchido")
     private String email;

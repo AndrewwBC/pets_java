@@ -40,4 +40,16 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id='" + id + '\'' +
+                ", description='" + description + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", user=" + user +
+                ", likes=" + likes +
+                '}';
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.pets4ever.services;
+package com.example.pets4ever.emailservices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;

@@ -22,23 +22,5 @@ public class UserController {
     TokenService tokenService;
     @Autowired
     UserRepository userRepo;
-    @Autowired
-    RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
-    @GetMapping("/profile")
-    public ResponseEntity getUserData(@RequestHeader("Authorization") String bearerToken) {
-
-        System.out.println(bearerToken);
-        String token = recoverTokenFromHeaderWithoutBearer.token(bearerToken);
-        String userId = tokenService.validateTokenAndGetUserId(token);
-
-        Optional<User> getUserDataById = userRepo.findById(userId);
-
-        User userData = getUserDataById.get();
-        System.out.println(userData);
-
-        ProfileDTO profileData = new ProfileDTO(userData.getId(), userData.getUsername());
-
-        return ResponseEntity.status(HttpStatus.OK).body(profileData);
-    }
 
 }

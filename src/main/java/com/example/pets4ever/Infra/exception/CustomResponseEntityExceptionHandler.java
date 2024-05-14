@@ -1,6 +1,8 @@
-package com.example.pets4ever.controllers.exception;
+package com.example.pets4ever.Infra.exception;
 
-import com.example.pets4ever.user.error.RegisterError;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.example.pets4ever.Infra.exception.user.CustomValidationException;
+import com.example.pets4ever.Infra.exception.user.ErrorListDTO;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +17,20 @@ public class CustomResponseEntityExceptionHandler {
     @ExceptionHandler
     public ResponseEntity handle(ConstraintViolationException exception) {
 
-        List<RegisterError> messages =  new ArrayList<>();
+        List<ErrorListDTO> messages =  new ArrayList<>();
 
         exception.getConstraintViolations().forEach(constraintViolation -> {
             System.out.println(constraintViolation.getMessage());
-            messages.add(new RegisterError(constraintViolation.getPropertyPath().toString()
+            messages.add(new ErrorListDTO(constraintViolation.getPropertyPath().toString()
                     ,constraintViolation.getMessage()));
         });
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(messages);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handle(JWTVerificationException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Token inválido");
+    }
+
 }
