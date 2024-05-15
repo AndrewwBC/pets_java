@@ -6,10 +6,9 @@ import com.example.pets4ever.user.DTO.ProfileDTO;
 import com.example.pets4ever.user.DTO.RegisterDTO;
 import com.example.pets4ever.user.DTO.UpdateDTO;
 import com.example.pets4ever.user.DTO.UserAuthDTO;
-import com.example.pets4ever.user.validations.Validate;
 import com.example.pets4ever.user.validations.login.LoginValidate;
+import com.example.pets4ever.user.validations.register.RegisterValidate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,10 +27,6 @@ public class UserServices {
     private UserRole userRole;
 
     @Autowired
-    @Qualifier("registerValidate")
-    private Validate validate;
-
-    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -42,6 +37,9 @@ public class UserServices {
 
     @Autowired
     List<LoginValidate> loginValidate;
+
+    @Autowired
+    List<RegisterValidate> registerValidate;
 
     public String login(UserAuthDTO userAuthDTO) {
         this.loginValidate.forEach(v -> v.validate(userAuthDTO));
@@ -62,7 +60,7 @@ public class UserServices {
     }
     public User register(RegisterDTO registerDTO) {
 
-        this.validate.registerValidate(registerDTO);
+        this.registerValidate.forEach(v -> v.validate(registerDTO));
 
         if(Objects.equals(registerDTO.email(), admMail)) {
             this.userRole = UserRole.ADMIN;
@@ -78,7 +76,7 @@ public class UserServices {
 
     public User update(UpdateDTO updateDTO, String userId) {
 
-        this.validate.updateValidate(updateDTO);
+        //this.validate.updateValidate(updateDTO);
 
         Optional<User> user = userRepository.findById(userId);
         System.out.println(user);
