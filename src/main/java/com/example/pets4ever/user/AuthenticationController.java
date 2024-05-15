@@ -7,14 +7,10 @@ import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 
 @RestController
@@ -31,6 +27,7 @@ public class AuthenticationController {
     UserServices userServices;
     @Autowired
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
+
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Valid UserAuthDTO data) {
 

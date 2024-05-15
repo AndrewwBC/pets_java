@@ -1,4 +1,4 @@
-package com.example.pets4ever.Infra.exception.user;
+package com.example.pets4ever.Infra.exception.dto;
 
 
 import lombok.Getter;

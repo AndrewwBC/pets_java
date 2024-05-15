@@ -1,8 +1,7 @@
 package com.example.pets4ever.Infra.exception;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.pets4ever.Infra.exception.user.CustomValidationException;
-import com.example.pets4ever.Infra.exception.user.ErrorListDTO;
+import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -7,7 +7,7 @@ import com.example.pets4ever.user.DTO.RegisterDTO;
 import com.example.pets4ever.user.DTO.UpdateDTO;
 import com.example.pets4ever.user.DTO.UserAuthDTO;
 import com.example.pets4ever.user.validations.Validate;
-import io.jsonwebtoken.lang.Assert;
+import com.example.pets4ever.user.validations.login.LoginValidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,8 +40,11 @@ public class UserServices {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    List<LoginValidate> loginValidate;
+
     public String login(UserAuthDTO userAuthDTO) {
-        this.validate.loginValidate(userAuthDTO.email());
+        this.loginValidate.forEach(v -> v.validate(userAuthDTO));
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(userAuthDTO.email(), userAuthDTO.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);

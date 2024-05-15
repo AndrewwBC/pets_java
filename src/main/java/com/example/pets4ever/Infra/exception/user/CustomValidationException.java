@@ -1,5 +1,6 @@
 package com.example.pets4ever.Infra.exception.user;
 
+import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
 import jakarta.validation.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

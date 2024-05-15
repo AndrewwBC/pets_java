@@ -5,9 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserRepository extends JpaRepository<User, String> {
-    UserDetails findByName(String name);
-    UserDetails findByEmail(String email);
-
-    @Query(value = "SELECT email FROM Users WHERE email = :email")
-    String findByEmailToCheckLogin(String email);
+    User findByName(String name);
+    User findByEmail(String email);
+    @Query(value = "SELECT u FROM Users u WHERE u.email = :email")
+    UserDetails findByEmailToReturnUserDetails(String email);
 }
