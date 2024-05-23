@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -47,6 +49,17 @@ public class AuthenticationController {
         String userId = getUserIdFromToken.userId(bearerToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(userServices.profile(userId));
+    }
+
+    @PostMapping("/profileimg")
+    public ResponseEntity<User> profileImage(@ModelAttribute ProfileImg profileImg, @RequestHeader("Authorization") String bearerToken){
+        System.out.println(profileImg);
+
+        String userId = getUserIdFromToken.userId(bearerToken);
+
+        User userWithNewProfileImage = userServices.changeProfilePicture(profileImg, userId);
+
+        return ResponseEntity.ok().body(userWithNewProfileImage);
     }
 
     @PutMapping("/update")

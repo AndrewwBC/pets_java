@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.collection.spi.PersistentList;
 import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.validator.constraints.Length;
@@ -44,6 +45,8 @@ public class User implements UserDetails {
 
     @Length(min = 6, message = "Senha com ao menos seis caractéres!")
     private String password;
+
+    private String userProfilePhotoUrl;
 
     private UserRole role;
 

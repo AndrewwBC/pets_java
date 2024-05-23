@@ -2,10 +2,8 @@ package com.example.pets4ever.user;
 
 
 import com.example.pets4ever.Infra.TokenService;
-import com.example.pets4ever.user.DTO.ProfileDTO;
-import com.example.pets4ever.user.DTO.RegisterDTO;
-import com.example.pets4ever.user.DTO.UpdateDTO;
-import com.example.pets4ever.user.DTO.UserAuthDTO;
+import com.example.pets4ever.aws.AmazonClient;
+import com.example.pets4ever.user.DTO.*;
 import com.example.pets4ever.user.validations.login.LoginValidate;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +39,12 @@ public class UserServices {
     @Autowired
     List<RegisterValidate> registerValidate;
 
+    private final AmazonClient amazonClient;
+    @Autowired
+    UserServices(AmazonClient amazonClient) {
+        this.amazonClient = amazonClient;
+    }
+
     public String login(UserAuthDTO userAuthDTO) {
         this.loginValidate.forEach(v -> v.validate(userAuthDTO));
 
@@ -53,7 +57,7 @@ public class UserServices {
     public ProfileDTO profile(String userId) {
         User user = userRepository.findById(userId).get();
 
-        ProfileDTO profileDTO = new ProfileDTO(user.getId(), user.getUsername(), user.getEmail(),user.getFollowing(), user.getFollowers(), user.getPosts());
+        ProfileDTO profileDTO = new ProfileDTO(user.getId(), user.getUsername(), user.getEmail(),user.getUserProfilePhotoUrl(),user.getFollowing(), user.getFollowers(), user.getPosts());
         System.out.println(profileDTO);
 
         return profileDTO;
@@ -103,8 +107,24 @@ public class UserServices {
             return userToBeDeleted.get();
         }
         return null;
-
     }
+
+    public User changeProfilePicture(ProfileImg profileImg, String userId) {
+
+        Optional<User> user = this.userRepository.findById(userId);
+
+        String pictureUrl = this.amazonClient.uploadFile(profileImg.getFile());
+        System.out.println(pictureUrl);
+
+        if(user.isPresent()) {
+            user.get().setUserProfilePhotoUrl(pictureUrl);
+            userRepository.save(user.get());
+            return user.get();
+        }
+
+        return null;
+    }
+
 }
 
 

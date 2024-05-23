@@ -15,9 +15,12 @@ public class PostDTO {
     private MultipartFile file;
 
     private String creationDate;
-    public PostDTO(String description,MultipartFile file , String creationDate) {
+
+    private String isStorie;
+    public PostDTO(String description,MultipartFile file , String creationDate, String isStorie) {
         this.description = description;
         this.file = file;
         this.creationDate = creationDate;
+        this.isStorie = isStorie;
     }
 }

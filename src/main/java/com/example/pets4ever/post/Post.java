@@ -3,8 +3,11 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +16,7 @@ import java.util.List;
 
 @Entity(name = "Posts")
 @Table(name = "posts")
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -28,7 +31,8 @@ public class Post {
     private String imageUrl;
     private String creationDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"posts"})
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -40,6 +44,13 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
+
+    public Post(String description, String imageUrl, String creationDate, User user){
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.creationDate = creationDate;
+        this.user = user;
+    }
 
     @Override
     public String toString() {
