@@ -31,24 +31,23 @@ public class AuthenticationController {
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody @Valid UserAuthDTO data) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserAuthDTO data) {
 
-        var token = this.userServices.login(data);
+        LoginResponseDTO response = this.userServices.login(data);
 
-       return ResponseEntity.ok(new LoginResponseDTO(token));
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO data) {
          return ResponseEntity.ok().body(userServices.register(data));
     }
     @GetMapping("/profile")
-    public ResponseEntity profile(@RequestHeader("Authorization") String bearerToken) {
-
-        System.out.println(bearerToken);
-
+    public ResponseEntity<ProfileDTO> profile(@RequestHeader("Authorization") String bearerToken) {
         String userId = getUserIdFromToken.userId(bearerToken);
 
-        return ResponseEntity.status(HttpStatus.OK).body(userServices.profile(userId));
+        ProfileDTO profileResponseData = userServices.profile(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(profileResponseData);
     }
 
     @PostMapping("/profileimg")

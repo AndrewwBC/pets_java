@@ -3,9 +3,11 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.Infra.TokenService;
 import com.example.pets4ever.aws.AmazonClient;
+import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.DTO.*;
 import com.example.pets4ever.user.validations.login.LoginValidate;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,9 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServices {
@@ -45,22 +46,27 @@ public class UserServices {
         this.amazonClient = amazonClient;
     }
 
-    public String login(UserAuthDTO userAuthDTO) {
+    public LoginResponseDTO login(UserAuthDTO userAuthDTO) {
         this.loginValidate.forEach(v -> v.validate(userAuthDTO));
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(userAuthDTO.email(), userAuthDTO.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return token;
+        String userId = this.tokenService.validateTokenAndGetUserId(token);
+
+        User user = this.userRepository.findById(userId).get();
+
+        return LoginResponseDTO.fromUserAndToken(user, token);
     }
     public ProfileDTO profile(String userId) {
-        User user = userRepository.findById(userId).get();
 
-        ProfileDTO profileDTO = new ProfileDTO(user.getId(), user.getUsername(), user.getEmail(),user.getUserProfilePhotoUrl(),user.getFollowing(), user.getFollowers(), user.getPosts());
-        System.out.println(profileDTO);
+            List<Post> posts = userRepository.getPostsByUserId(userId);
+            ProfileDTO profileResponseData = new ProfileDTO(posts);
 
-        return profileDTO;
+            System.out.println(posts);
+
+            return profileResponseData;
     }
     public User register(RegisterDTO registerDTO) {
 

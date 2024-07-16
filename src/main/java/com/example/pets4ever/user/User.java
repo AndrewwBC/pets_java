@@ -3,6 +3,9 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.post.Post;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
@@ -24,11 +27,12 @@ import java.util.List;
 
 @Entity(name = "Users")
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Validated
+@Getter
+@Setter
 public class User implements UserDetails {
 
     @Id
@@ -50,36 +54,20 @@ public class User implements UserDetails {
 
     private UserRole role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     private List<Post> posts;
 
-    @ManyToMany(mappedBy = "likes", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "likes")
     private List<Post> userLikes;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany
     private List<User> followers;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany
     private List<User> following;
-
-
-    @Transactional
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    @Transactional
-    public List<Post> getUserLikes() {
-        return userLikes;
-    }
-
-    @Transactional
-    public List<Comment> getComments() {
-        return comments;
-    }
 
     public User(String name, String email, String password, UserRole role) {
         this.name = name;
@@ -90,7 +78,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("Entrou no getAuthorities");
         if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
@@ -127,6 +114,7 @@ public class User implements UserDetails {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", userProfilePhotoUrl='" + userProfilePhotoUrl + '\'' +
                 '}';
     }
 }

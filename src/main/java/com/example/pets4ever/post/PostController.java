@@ -3,6 +3,8 @@ package com.example.pets4ever.post;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponseDTO;
 import com.example.pets4ever.utils.GetUserIdFromToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,6 @@ public class PostController {
     public ResponseEntity<List<PostResponseDTO>> show(){
 
         List<PostResponseDTO> allPosts = this.postServices.getPosts();
-
         return ResponseEntity.ok().body(allPosts);
     }
 
@@ -34,6 +35,14 @@ public class PostController {
 
         Post newPost = postServices.insert(postDTO, userId);
         return ResponseEntity.status(HttpStatus.OK).body(newPost);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> profile(@RequestHeader("Authorization") String bearerToken) throws JsonProcessingException {
+        String userId = getUserIdFromToken.userId(bearerToken);
+
+        return ResponseEntity.ok(postServices.profile(userId));
+
     }
 
     @PostMapping("/createStorie")

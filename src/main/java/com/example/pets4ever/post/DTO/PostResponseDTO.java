@@ -1,6 +1,7 @@
 package com.example.pets4ever.post.DTO;
 
 import com.example.pets4ever.comment.Comment;
+import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.user.User;
 import lombok.Data;
 
@@ -17,8 +18,10 @@ public class PostResponseDTO {
     private String name;
     private String userProfileImageUrl;
     private String userId;
+    private List<CommentPostResponseDTO> comments;
 
-    public PostResponseDTO(String postId, String description, String imageUrl, String creationDate, String name,String userProfileImageUrl ,String userId) {
+
+    public PostResponseDTO(String postId, String description, String imageUrl, String creationDate, String name,String userProfileImageUrl ,String userId, List<CommentPostResponseDTO> comments) {
         this.postId = postId;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -26,6 +29,7 @@ public class PostResponseDTO {
         this.creationDate = creationDate;
         this.name = name;
         this.userId = userId;
+        this.comments = comments;
     }
 
     @Override
@@ -35,8 +39,10 @@ public class PostResponseDTO {
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", creationDate='" + creationDate + '\'' +
-                ", username='" + name + '\'' +
+                ", name='" + name + '\'' +
+                ", userProfileImageUrl='" + userProfileImageUrl + '\'' +
                 ", userId='" + userId + '\'' +
+                ", comments=" + comments +
                 '}';
     }
 }

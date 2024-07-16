@@ -3,23 +3,22 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "Posts")
 @Table(name = "posts")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Setter
+@Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="isStorie", discriminatorType = DiscriminatorType.STRING)
 
@@ -31,8 +30,7 @@ public class Post {
     private String imageUrl;
     private String creationDate;
 
-    @JsonIgnoreProperties({"posts"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -42,7 +40,7 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch=FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String description, String imageUrl, String creationDate, User user){
@@ -52,6 +50,7 @@ public class Post {
         this.user = user;
     }
 
+
     @Override
     public String toString() {
         return "Post{" +
@@ -59,8 +58,9 @@ public class Post {
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", creationDate='" + creationDate + '\'' +
-                ", user=" + user +
                 ", likes=" + likes +
+                ", user=" + user +
+                ", comments=" + comments +
                 '}';
     }
 }
