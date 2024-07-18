@@ -22,10 +22,11 @@ public class PostResponseDTO {
     private String userProfileImageUrl;
     private String userId;
     private boolean userLikedThisPost;
+    private Long quantityOfLikes;
     private List<Like> listOfLikes;
     private List<CommentPostResponseDTO> comments;
 
-    public static PostResponseDTO fromData(Post post, User user, boolean userLikedThisPost,List<Like> listOfLikes ,List<CommentPostResponseDTO> comments) {
+    public static PostResponseDTO fromData(Post post, User user, boolean userLikedThisPost,Long quantityOfLikes,List<Like> listOfLikes ,List<CommentPostResponseDTO> comments) {
         return new PostResponseDTO(
                 post.getId(),
                 post.getDescription(),
@@ -35,6 +36,7 @@ public class PostResponseDTO {
                 user.getUserProfilePhotoUrl(),
                 user.getId(),
                 userLikedThisPost,
+                quantityOfLikes,
                 listOfLikes,
                 comments
         );

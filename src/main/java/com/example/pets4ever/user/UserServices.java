@@ -88,11 +88,13 @@ public class UserServices {
                     List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
                     new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getComment())).collect(Collectors.toList());
 
+                    Long quantityOfLikes = (long) post.getLikes().size();
+
                     List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
                     boolean userLikedThisPost = userId.equals(post.getUser().getId());
 
 
-            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost ,listOflikes,commentPostResponseDTOS);
+            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
         }).collect(Collectors.toList());
 
 

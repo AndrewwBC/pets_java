@@ -46,6 +46,7 @@ public class PostServices {
         List<PostResponseDTO> response = allPosts.stream().map(post -> {
 
             boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> userId.equals(like.getId()));
+            Long quantityOfLikes = (long) post.getLikes().size();
 
             List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
             post.getComments().forEach(comment -> {
@@ -54,7 +55,7 @@ public class PostServices {
 
             List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
 
-            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost,listOflikes,commentPostResponseDTOS);
+            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
         }).toList();
         return response;
     }
@@ -63,10 +64,16 @@ public class PostServices {
 
         Post post = this.postRepository.findById(postId).get();
         User user = this.userRepository.findById(userId).get();
+
+        if(post.getLikes().contains(user)) {
+            post.getLikes().remove(user);
+            this.postRepository.save(post);
+
+            return user.getName();
+        }
+
         post.getLikes().add(user);
-
         this.postRepository.save(post);
-
         return user.getName();
     }
 
