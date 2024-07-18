@@ -3,7 +3,8 @@ package com.example.pets4ever.post;
 import com.example.pets4ever.aws.AmazonClient;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostDTO;
-import com.example.pets4ever.post.DTO.PostResponseDTO;
+import com.example.pets4ever.post.DTO.PostResponse.Like;
+import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServices {
@@ -38,46 +40,34 @@ public class PostServices {
         }
         return null;
     }
-    public List<PostResponseDTO> getPosts() {
-
+    public List<PostResponseDTO> getPosts(String userId) {
         List<Post> allPosts =  this.postRepository.findAll();
 
-        List<PostResponseDTO> response = new ArrayList<>();
-        allPosts.forEach(post -> {
+        List<PostResponseDTO> response = allPosts.stream().map(post -> {
+
+            boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> userId.equals(like.getId()));
 
             List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
-
             post.getComments().forEach(comment -> {
                 commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getComment()));
             });
-            PostResponseDTO postResponseDTO = new PostResponseDTO(post.getId(), post.getDescription(), post.getImageUrl(), post.getCreationDate(), post.getUser().getName(),post.getUser().getUserProfilePhotoUrl(), post.getUser().getId(), commentPostResponseDTOS);
 
-            System.out.println(post.getComments());
-            response.add(postResponseDTO);
+            List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
 
-        });
+            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost,listOflikes,commentPostResponseDTOS);
+        }).toList();
         return response;
     }
 
-    public List<PostResponseDTO> profile(String userId) {
+    public String UpdatePostToReceiveLikesService(String postId, String userId){
 
+        Post post = this.postRepository.findById(postId).get();
+        User user = this.userRepository.findById(userId).get();
+        post.getLikes().add(user);
 
-        List<Post> allPosts =  this.postRepository.findAllByUserId(userId);
+        this.postRepository.save(post);
 
-        List<PostResponseDTO> response = new ArrayList<>();
-        allPosts.forEach(post -> {
-
-            List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
-
-            post.getComments().forEach(comment -> {
-                commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getComment()));
-            });
-            PostResponseDTO postResponseDTO = new PostResponseDTO(post.getId(), post.getDescription(), post.getImageUrl(), post.getCreationDate(), post.getUser().getName(),post.getUser().getUserProfilePhotoUrl(), post.getUser().getId(), commentPostResponseDTOS);
-
-            System.out.println(post.getComments());
-            response.add(postResponseDTO);
-
-        });
-        return response;
+        return user.getName();
     }
+
 }

@@ -1,14 +1,17 @@
-package com.example.pets4ever.post.DTO;
+package com.example.pets4ever.post.DTO.PostResponse;
 
-import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
+import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.User;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class PostResponseDTO {
 
     private String postId;
@@ -18,18 +21,23 @@ public class PostResponseDTO {
     private String name;
     private String userProfileImageUrl;
     private String userId;
+    private boolean userLikedThisPost;
+    private List<Like> listOfLikes;
     private List<CommentPostResponseDTO> comments;
 
-
-    public PostResponseDTO(String postId, String description, String imageUrl, String creationDate, String name,String userProfileImageUrl ,String userId, List<CommentPostResponseDTO> comments) {
-        this.postId = postId;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.userProfileImageUrl = userProfileImageUrl;
-        this.creationDate = creationDate;
-        this.name = name;
-        this.userId = userId;
-        this.comments = comments;
+    public static PostResponseDTO fromData(Post post, User user, boolean userLikedThisPost,List<Like> listOfLikes ,List<CommentPostResponseDTO> comments) {
+        return new PostResponseDTO(
+                post.getId(),
+                post.getDescription(),
+                post.getImageUrl(),
+                post.getCreationDate(),
+                user.getName(),
+                user.getUserProfilePhotoUrl(),
+                user.getId(),
+                userLikedThisPost,
+                listOfLikes,
+                comments
+        );
     }
 
     @Override

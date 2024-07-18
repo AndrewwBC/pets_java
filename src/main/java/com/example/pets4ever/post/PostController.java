@@ -1,10 +1,10 @@
 package com.example.pets4ever.post;
 
 import com.example.pets4ever.post.DTO.PostDTO;
-import com.example.pets4ever.post.DTO.PostResponseDTO;
+import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
+import com.example.pets4ever.post.DTO.UpdatePostToReceiveLikeDTO;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +21,16 @@ public class PostController {
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
     @GetMapping("/show")
-    public ResponseEntity<List<PostResponseDTO>> show(){
+    public ResponseEntity<List<PostResponseDTO>> show(@RequestHeader("Authorization") String bearerToken){
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
-        List<PostResponseDTO> allPosts = this.postServices.getPosts();
+        List<PostResponseDTO> allPosts = this.postServices.getPosts(userId);
         return ResponseEntity.ok().body(allPosts);
     }
 
     @PostMapping("/create")
     public ResponseEntity<Post> create(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         System.out.println(postDTO.getIsStorie());
 
@@ -39,18 +40,29 @@ public class PostController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> profile(@RequestHeader("Authorization") String bearerToken) throws JsonProcessingException {
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
-        return ResponseEntity.ok(postServices.profile(userId));
+        return ResponseEntity.ok("Oi");
 
     }
 
     @PostMapping("/createStorie")
     public ResponseEntity<Post> createStorie(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         Post newStorie = postServices.insert(postDTO, userId);
 
         return ResponseEntity.ok().body(newStorie);
+    }
+
+    @PostMapping("/postlike")
+    public ResponseEntity<String> updatePostToReceiveLike(@ModelAttribute UpdatePostToReceiveLikeDTO data, @RequestHeader("Authorization") String bearerToken) {
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
+
+        System.out.println(data);
+
+        String response = this.postServices.UpdatePostToReceiveLikesService(data.getPostId(), userId);
+
+        return ResponseEntity.ok().body(response);
     }
 }

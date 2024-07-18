@@ -63,10 +63,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<User> followers;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<User> following;
 
     public User(String name, String email, String password, UserRole role) {
@@ -74,6 +74,15 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String id, String name, String email, String userProfilePhotoUrl, List<User> followers, List<User> following) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.userProfilePhotoUrl = userProfilePhotoUrl;
+        this.followers = followers;
+        this.following = following;
     }
 
     @Override
@@ -113,8 +122,9 @@ public class User implements UserDetails {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", userProfilePhotoUrl='" + userProfilePhotoUrl + '\'' +
+                ", followers=" + followers +
+                ", following=" + following +
                 '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.example.pets4ever.user;
 
 import com.example.pets4ever.post.Post;
-import com.example.pets4ever.user.DTO.ProfileDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -31,7 +31,7 @@ public class CommentController {
     public ResponseEntity<String> insertComment(@RequestBody CommentDTO commentDTO, @RequestHeader("Authorization") String bearerToken){
 
         System.out.println(commentDTO);
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         Optional<User> user = this.userRepository.findById(userId);
         Optional<Post> post = this.postRepository.findById(commentDTO.getPostId());

@@ -3,11 +3,17 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.Infra.TokenService;
 import com.example.pets4ever.aws.AmazonClient;
+import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
+import com.example.pets4ever.post.DTO.PostResponse.Like;
+import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.DTO.*;
+import com.example.pets4ever.user.DTO.Profile.FollowersData;
+import com.example.pets4ever.user.DTO.Profile.FollowersList;
+import com.example.pets4ever.user.DTO.Profile.FollowingsData;
+import com.example.pets4ever.user.DTO.Profile.ProfileDTO;
 import com.example.pets4ever.user.validations.login.LoginValidate;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,12 +67,39 @@ public class UserServices {
     }
     public ProfileDTO profile(String userId) {
 
-            List<Post> posts = userRepository.getPostsByUserId(userId);
-            ProfileDTO profileResponseData = new ProfileDTO(posts);
+        User user =  this.userRepository.findById(userId).get();
 
-            System.out.println(posts);
+        List<User> followers = user.getFollowers();
+        List<User> following = user.getFollowing();
+        List<Post> userPosts = user.getPosts();
 
-            return profileResponseData;
+        List<FollowersList> followerOfProfileDTOS = followers.stream().map(followUser ->
+                new FollowersList(followUser.getUsername())
+                ).collect(Collectors.toList());
+
+        FollowersData followersData = new FollowersData(followerOfProfileDTOS, followers.stream().count());
+
+
+        List<FollowingsData> followingOfProfileDTOS = following.stream().map(followingUser ->
+               new FollowingsData(followingUser.getUsername())
+                ).collect(Collectors.toList());
+
+        List<PostResponseDTO> postResponseDTOList = userPosts.stream().map(post -> {
+                    List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
+                    new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getComment())).collect(Collectors.toList());
+
+                    List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
+                    boolean userLikedThisPost = userId.equals(post.getUser().getId());
+
+
+            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost ,listOflikes,commentPostResponseDTOS);
+        }).collect(Collectors.toList());
+
+
+        ProfileDTO response = ProfileDTO.fromData(user, followersData, followingOfProfileDTOS, postResponseDTOList);
+        System.out.println(response);
+
+        return response;
     }
     public User register(RegisterDTO registerDTO) {
 

@@ -13,7 +13,7 @@ public class GetUserIdFromToken {
 
     @Autowired
     TokenService tokenService;
-    public String userId(String bearerToken) {
+    public String recoverUserId(String bearerToken) {
         String token = recoverTokenFromHeaderWithoutBearer.token(bearerToken);
         return tokenService.validateTokenAndGetUserId(token);
     }

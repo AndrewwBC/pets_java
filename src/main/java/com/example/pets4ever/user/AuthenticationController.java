@@ -2,6 +2,7 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.Infra.TokenService;
 import com.example.pets4ever.user.DTO.*;
+import com.example.pets4ever.user.DTO.Profile.ProfileDTO;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import jakarta.validation.Valid;
@@ -11,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
 
 
 @RestController
@@ -43,18 +42,16 @@ public class AuthenticationController {
     }
     @GetMapping("/profile")
     public ResponseEntity<ProfileDTO> profile(@RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
-        ProfileDTO profileResponseData = userServices.profile(userId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(profileResponseData);
+        return ResponseEntity.status(HttpStatus.OK).body(userServices.profile(userId));
     }
 
     @PostMapping("/profileimg")
     public ResponseEntity<User> profileImage(@ModelAttribute ProfileImg profileImg, @RequestHeader("Authorization") String bearerToken){
         System.out.println(profileImg);
 
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         User userWithNewProfileImage = userServices.changeProfilePicture(profileImg, userId);
 
@@ -64,7 +61,7 @@ public class AuthenticationController {
     @PutMapping("/update")
     public ResponseEntity<User> update(@RequestHeader("Authorization") String bearerToken, @RequestBody UpdateDTO updateDTO){
 
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         User userUpdated = userServices.update(updateDTO, userId);
 
@@ -74,7 +71,7 @@ public class AuthenticationController {
     @DeleteMapping("/delete")
     public ResponseEntity<User> delete(@RequestHeader("Authorization") String bearerToken){
 
-        String userId = getUserIdFromToken.userId(bearerToken);
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         System.out.println(userId);
 
