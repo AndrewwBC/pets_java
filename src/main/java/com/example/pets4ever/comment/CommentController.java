@@ -2,6 +2,7 @@ package com.example.pets4ever.comment;
 
 
 import com.example.pets4ever.comment.DTO.CommentDTO;
+import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.post.PostRepository;
 import com.example.pets4ever.user.User;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,6 +28,8 @@ public class CommentController {
     PostRepository postRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CommentService commentService;
 
     @PostMapping("/store")
     public ResponseEntity<String> insertComment(@RequestBody CommentDTO commentDTO, @RequestHeader("Authorization") String bearerToken){
@@ -43,5 +47,13 @@ public class CommentController {
         } else {
             return null;
         }
+    }
+
+    @GetMapping("/comments/{postId}")
+    public ResponseEntity<List<CommentPostResponseDTO>> getComments(@PathVariable String postId){
+        System.out.println(postId);
+        List<CommentPostResponseDTO> comments = this.commentService.getCommentsFromPostId(postId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 }

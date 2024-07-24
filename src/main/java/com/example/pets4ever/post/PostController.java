@@ -29,13 +29,13 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Post> create(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity.BodyBuilder create(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
         String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
         System.out.println(postDTO.getIsStorie());
 
         Post newPost = postServices.insert(postDTO, userId);
-        return ResponseEntity.status(HttpStatus.OK).body(newPost);
+        return ResponseEntity.status(HttpStatus.CREATED);
     }
 
     @GetMapping("/profile")

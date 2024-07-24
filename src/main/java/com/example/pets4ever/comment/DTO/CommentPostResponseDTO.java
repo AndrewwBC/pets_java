@@ -1,15 +1,18 @@
 package com.example.pets4ever.comment.DTO;
 
+import com.example.pets4ever.user.User;
 import lombok.*;
 
-@Getter
-@Setter
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class CommentPostResponseDTO {
 
-    private String userId;
-    private String userProfileImageUrl;
-    private String comment;
+public record CommentPostResponseDTO (
+        String userId,
+        String userProfileImageUrl,
+        String username,
+        String comment
+){
+    public static CommentPostResponseDTO fromData(User user, String comment){
+        return new CommentPostResponseDTO(
+            user.getId(), user.getUserProfilePhotoUrl(), user.getUsername(),comment
+        );
+    }
 }

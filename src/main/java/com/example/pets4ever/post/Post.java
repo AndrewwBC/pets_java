@@ -58,9 +58,6 @@ public class Post {
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", creationDate='" + creationDate + '\'' +
-                ", likes=" + likes +
-                ", user=" + user +
-                ", comments=" + comments +
                 '}';
     }
 }

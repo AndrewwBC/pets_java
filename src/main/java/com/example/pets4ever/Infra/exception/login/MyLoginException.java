@@ -19,7 +19,6 @@ public class MyLoginException extends ValidationException {
     }
     @ExceptionHandler(MyLoginException.class)
     public ResponseEntity<List<ErrorListDTO>> handler(MyLoginException loginException){
-        System.out.println(this.loginError);
         return ResponseEntity.badRequest().body(loginException.loginError);
     }
 

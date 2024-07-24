@@ -1,8 +1,10 @@
-package com.example.pets4ever.user;
+package com.example.pets4ever.authentication;
 
 import com.example.pets4ever.Infra.TokenService;
 import com.example.pets4ever.user.DTO.*;
-import com.example.pets4ever.user.DTO.Profile.ProfileDTO;
+import com.example.pets4ever.user.User;
+import com.example.pets4ever.user.UserServices;
+import com.example.pets4ever.user.validations.login.LoginValidate;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import jakarta.validation.Valid;
@@ -11,15 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
     @Autowired
@@ -27,24 +30,27 @@ public class AuthenticationController {
     @Autowired
     UserServices userServices;
     @Autowired
+    List<LoginValidate> loginValidate;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserAuthDTO data) {
+    @PostMapping("/signin")
+    public ResponseEntity<SigninDTO> login(@RequestBody @Valid UserAuthDTO data) {
 
-        LoginResponseDTO response = this.userServices.login(data);
+        this.loginValidate.forEach(v -> v.validate(data));
 
-        return ResponseEntity.ok(response);
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+        var token = tokenService.generateToken((User) auth.getPrincipal());
+        var userId = tokenService.validateTokenAndGetUserId(token);
+
+        return ResponseEntity.ok(new SigninDTO(token, userId));
     }
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO data) {
          return ResponseEntity.ok().body(userServices.register(data));
-    }
-    @GetMapping("/profile")
-    public ResponseEntity<ProfileDTO> profile(@RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.recoverUserId(bearerToken);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userServices.profile(userId));
     }
 
     @PostMapping("/profileimg")

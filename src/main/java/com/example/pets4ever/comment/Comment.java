@@ -12,7 +12,6 @@ import java.util.Optional;
 @Entity
 @Getter
 @Setter
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
@@ -38,12 +37,4 @@ public class Comment {
         return this.user.getId();
     }
 
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "comment='" + comment + '\'' +
-                "userId" + user.getId() + '\'' +
-                "userProfileImage" + user.getUserProfilePhotoUrl() + '\''+
-                '}';
-    }
 }

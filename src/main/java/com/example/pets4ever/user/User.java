@@ -54,7 +54,7 @@ public class User implements UserDetails {
 
     private UserRole role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Post> posts;
 
     @ManyToMany(mappedBy = "likes")
@@ -125,6 +125,7 @@ public class User implements UserDetails {
                 ", userProfilePhotoUrl='" + userProfilePhotoUrl + '\'' +
                 ", followers=" + followers +
                 ", following=" + following +
+                ",posts," + posts +
                 '}';
     }
 }
