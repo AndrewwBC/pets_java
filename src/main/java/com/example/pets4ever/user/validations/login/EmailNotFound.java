@@ -2,7 +2,7 @@ package com.example.pets4ever.user.validations.login;
 
 import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
 import com.example.pets4ever.Infra.exception.login.MyLoginException;
-import com.example.pets4ever.user.DTO.UserAuthDTO;
+import com.example.pets4ever.user.DTO.SignIn.SignInDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,9 @@ public class EmailNotFound implements LoginValidate {
     @Autowired
     UserRepository userRepository;
     @Override
-    public void validate(UserAuthDTO userAuthDTO) {
+    public void validate(SignInDTO signInDTO) {
 
-        Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(userAuthDTO.email()));
+        Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(signInDTO.email()));
 
         if(user.isEmpty()) {
             List<ErrorListDTO> error = new ArrayList<>();

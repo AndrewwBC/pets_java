@@ -39,7 +39,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Length(min = 1, message = "Nome de usuário com ao menos um caractér!")
+    @Length(min = 3, max = 32, message = "Nome de usuário de 3 a 32 caractéres!")
     private String name;
 
     @Column(unique = true)
@@ -47,7 +47,7 @@ public class User implements UserDetails {
     @NotEmpty(message = "Email deve ser preenchido")
     private String email;
 
-    @Length(min = 6, message = "Senha com ao menos seis caractéres!")
+    @Length(min = 8,max = 64, message = "Senha com ao menos 8 caractéres!")
     private String password;
 
     private String userProfilePhotoUrl;

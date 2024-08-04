@@ -1,6 +1,7 @@
 package com.example.pets4ever.post.DTO;
 
 import com.example.pets4ever.user.User;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ public class PostDTO {
 
     private String description;
 
+    @NotBlank(message = "Insira uma imagem!")
     private MultipartFile file;
 
     private String creationDate;

@@ -1,7 +1,7 @@
 package com.example.pets4ever.user.validations;
 
-import com.example.pets4ever.user.DTO.RegisterDTO;
-import com.example.pets4ever.user.DTO.UpdateDTO;
+import com.example.pets4ever.user.DTO.Register.RegisterDTO;
+import com.example.pets4ever.user.DTO.UpdateDTO.UpdateDTO;
 
 public interface Validate {
 

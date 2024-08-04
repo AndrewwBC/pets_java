@@ -12,12 +12,11 @@ import com.example.pets4ever.user.DTO.Profile.FollowersData;
 import com.example.pets4ever.user.DTO.Profile.FollowersList;
 import com.example.pets4ever.user.DTO.Profile.FollowingsData;
 import com.example.pets4ever.user.DTO.Profile.UserProfileDTO;
-import com.example.pets4ever.user.validations.login.LoginValidate;
+import com.example.pets4ever.user.DTO.Register.RegisterDTO;
+import com.example.pets4ever.user.DTO.UpdateDTO.UpdateDTO;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +38,6 @@ public class UserServices {
 
     @Autowired
     List<RegisterValidate> registerValidate;
-
     private final AmazonClient amazonClient;
     @Autowired
     UserServices(AmazonClient amazonClient) {
@@ -86,15 +84,15 @@ public class UserServices {
 
         this.registerValidate.forEach(v -> v.validate(registerDTO));
 
-        if(Objects.equals(registerDTO.email(), admMail)) {
+        if(Objects.equals(registerDTO.getEmail(), admMail)) {
             this.userRole = UserRole.ADMIN;
         } else {
             this.userRole = UserRole.USER;
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.getPassword());
 
-        User newUser = new User(registerDTO.name(), registerDTO.email(), encryptedPassword, userRole);
+        User newUser = new User(registerDTO.getName(), registerDTO.getEmail(), encryptedPassword, userRole);
         return userRepository.save(newUser);
     }
 
@@ -145,6 +143,9 @@ public class UserServices {
         return null;
     }
 
+    public User signin(String userId) {
+        return this.userRepository.findById(userId).get();
+    }
 }
 
 

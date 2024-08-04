@@ -65,4 +65,10 @@ public class PostController {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/{id}/{userId}")
+    public ResponseEntity<?> getPost(@PathVariable String id, @PathVariable String userId) {
+        PostResponseDTO postResponseDTO = this.postServices.getPost(id, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(postResponseDTO);
+    }
 }

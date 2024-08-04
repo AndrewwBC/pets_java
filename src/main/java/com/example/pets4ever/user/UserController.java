@@ -36,6 +36,12 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+
+        return ResponseEntity.ok("DESPERADO");
+    }
 }
 
 

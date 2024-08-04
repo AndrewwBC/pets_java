@@ -7,6 +7,7 @@ import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,21 +46,10 @@ public class PostServices {
 
         List<PostResponseDTO> response = allPosts.stream().map(post -> {
 
-            boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> userId.equals(like.getId()));
-            Long quantityOfLikes = (long) post.getLikes().size();
-
-            List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
-            post.getComments().forEach(comment -> {
-                commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getUser().getUserProfilePhotoUrl(), comment.getUser().getUsername(), comment.getComment()));
-            });
-
-            List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
-
-            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
+            return getPostResponseDTO(userId, post);
         }).toList();
         return response;
     }
-
     public String UpdatePostToReceiveLikesService(String postId, String userId){
 
         Post post = this.postRepository.findById(postId).get();
@@ -75,6 +65,29 @@ public class PostServices {
         post.getLikes().add(user);
         this.postRepository.save(post);
         return user.getName();
+    }
+
+    public PostResponseDTO getPost(String postId, String userId) {
+
+        Post post = this.postRepository.findById(postId).get();
+
+        return getPostResponseDTO(userId, post);
+
+    }
+
+    @NotNull
+    private PostResponseDTO getPostResponseDTO(String userId, Post post) {
+        boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> userId.equals(like.getId()));
+        Long quantityOfLikes = (long) post.getLikes().size();
+
+        List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
+        post.getComments().forEach(comment -> {
+            commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getUser().getUserProfilePhotoUrl(), comment.getUser().getUsername(), comment.getComment()));
+        });
+
+        List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
+
+        return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
     }
 
 }

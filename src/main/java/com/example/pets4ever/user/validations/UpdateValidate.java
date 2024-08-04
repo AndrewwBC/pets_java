@@ -3,7 +3,7 @@ package com.example.pets4ever.user.validations;
 
 import com.example.pets4ever.Infra.exception.user.CustomValidationException;
 import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
-import com.example.pets4ever.user.DTO.UpdateDTO;
+import com.example.pets4ever.user.DTO.UpdateDTO.UpdateDTO;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

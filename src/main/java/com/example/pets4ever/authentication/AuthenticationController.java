@@ -2,6 +2,11 @@ package com.example.pets4ever.authentication;
 
 import com.example.pets4ever.Infra.TokenService;
 import com.example.pets4ever.user.DTO.*;
+import com.example.pets4ever.user.DTO.Register.RegisterDTO;
+import com.example.pets4ever.user.DTO.SignIn.SignInDTO;
+import com.example.pets4ever.user.DTO.SignIn.SignInResponseDTO;
+import com.example.pets4ever.user.DTO.SignIn.SignInWithSessionDTO;
+import com.example.pets4ever.user.DTO.UpdateDTO.UpdateDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserServices;
 import com.example.pets4ever.user.validations.login.LoginValidate;
@@ -37,8 +42,9 @@ public class AuthenticationController {
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
 
     @PostMapping("/signin")
-    public ResponseEntity<SigninDTO> login(@RequestBody @Valid UserAuthDTO data) {
+    public ResponseEntity<SignInResponseDTO> signin(@RequestBody @Valid SignInDTO data) {
 
+        System.out.println(data);
         this.loginValidate.forEach(v -> v.validate(data));
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
@@ -46,10 +52,21 @@ public class AuthenticationController {
         var token = tokenService.generateToken((User) auth.getPrincipal());
         var userId = tokenService.validateTokenAndGetUserId(token);
 
-        return ResponseEntity.ok(new SigninDTO(token, userId));
+        User user = this.userServices.signin(userId);
+
+        return ResponseEntity.ok(new SignInResponseDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl(), token));
+    }
+
+    @PostMapping("/loginwithsession")
+    public ResponseEntity<SignInWithSessionDTO> loginWithSession(@RequestHeader("Authorization") String bearerToken) {
+
+        String userId = getUserIdFromToken.recoverUserId(bearerToken);
+        User user = this.userServices.signin(userId);
+
+        return ResponseEntity.ok(new SignInWithSessionDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl()));
     }
     @PostMapping("/signup")
-    public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO data) {
+    public ResponseEntity<Object> signup(@RequestBody @Valid RegisterDTO data) {
          return ResponseEntity.ok().body(userServices.register(data));
     }
 
