@@ -26,13 +26,12 @@ public class TokenService {
     public String generateToken(User user){
         Algorithm algorithm = Algorithm.HMAC256(this.secret);
 
-        Date expiresAt = new Date(System.currentTimeMillis() + 1000);
 
         try {
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getId())
-                    .withExpiresAt(expiresAt)
+                    .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
         }
         catch (JWTCreationException exception) {
