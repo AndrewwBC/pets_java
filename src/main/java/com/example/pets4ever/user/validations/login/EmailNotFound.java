@@ -24,7 +24,7 @@ public class EmailNotFound implements LoginValidate {
 
         if(user.isEmpty()) {
             List<ErrorListDTO> error = new ArrayList<>();
-            error.add(new ErrorListDTO("Email", "Email não cadastrado!"));
+            error.add(new ErrorListDTO("email", "Email não cadastrado!"));
 
             throw new MyLoginException(error);
         }

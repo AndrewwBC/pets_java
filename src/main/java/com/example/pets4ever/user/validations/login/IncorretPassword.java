@@ -32,7 +32,7 @@ public class IncorretPassword implements LoginValidate{
 
             if(!encoder.matches(loginPassword, cryptedPassword)) {
                 List<ErrorListDTO> error = new ArrayList<>();
-                error.add(new ErrorListDTO("Password", "Senha incorreta!"));
+                error.add(new ErrorListDTO("password", "Senha incorreta!"));
 
                 throw new MyLoginException(error);
             }

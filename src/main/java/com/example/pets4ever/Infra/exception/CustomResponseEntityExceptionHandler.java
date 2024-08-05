@@ -1,6 +1,7 @@
 package com.example.pets4ever.Infra.exception;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.example.pets4ever.Infra.exception.TokenExpired.MyTokenExpiredException;
 import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @ControllerAdvice
 public class CustomResponseEntityExceptionHandler {
-    @ExceptionHandler
+    @ExceptionHandler()
     public ResponseEntity handle(ConstraintViolationException exception) {
 
         List<ErrorListDTO> messages =  new ArrayList<>();
