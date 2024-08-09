@@ -1,4 +1,4 @@
-package com.example.pets4ever.user.DTO.Register;
+package com.example.pets4ever.user.dtos.Register;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;

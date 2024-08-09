@@ -1,4 +1,4 @@
-package com.example.pets4ever.user.DTO.Profile;
+package com.example.pets4ever.user.dtos.Profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

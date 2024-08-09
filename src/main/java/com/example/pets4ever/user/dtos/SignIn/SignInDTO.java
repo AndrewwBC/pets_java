@@ -1,7 +1,6 @@
-package com.example.pets4ever.user.DTO.SignIn;
+package com.example.pets4ever.user.dtos.SignIn;
 
 import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.Length;
 
 public record SignInDTO(
 

@@ -30,10 +30,10 @@ public class Post {
     private String imageUrl;
     private String creationDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "likes",
             joinColumns = @JoinColumn(name = "post_id"),

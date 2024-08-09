@@ -1,7 +1,7 @@
-package com.example.pets4ever.user.DTO.Register.Validator;
+package com.example.pets4ever.user.dtos.Register.Validator;
 
 
-import com.example.pets4ever.user.DTO.Register.RegisterDTO;
+import com.example.pets4ever.user.dtos.Register.RegisterDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

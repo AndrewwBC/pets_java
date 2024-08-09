@@ -1,4 +1,4 @@
-package com.example.pets4ever.user.DTO.Register.Validator;
+package com.example.pets4ever.user.dtos.Register.Validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

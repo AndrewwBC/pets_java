@@ -1,8 +1,6 @@
-package com.example.pets4ever.user.DTO.UpdateDTO;
+package com.example.pets4ever.user.dtos.UpdateDTO;
 
-import com.example.pets4ever.user.DTO.Register.Validator.ValidPassword;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 

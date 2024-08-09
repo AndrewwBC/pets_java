@@ -2,7 +2,7 @@ package com.example.pets4ever.user.validations.register;
 
 import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
 import com.example.pets4ever.Infra.exception.register.MyRegisterException;
-import com.example.pets4ever.user.DTO.Register.RegisterDTO;
+import com.example.pets4ever.user.dtos.Register.RegisterDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,12 @@ public class EmailOrUsernameAlreadyInUse implements RegisterValidate{
 
         Optional<User> isUsernameRegistered = Optional.ofNullable(this.userRepository.findByName(registerDTO.getName()));
         if(isUsernameRegistered.isPresent()) {
-            error.add(new ErrorListDTO("Username", "Nome já cadastrado."));
+            error.add(new ErrorListDTO("name", "Nome já cadastrado."));
         }
 
         Optional<User> isEmailRegistered = Optional.ofNullable(this.userRepository.findByEmail(registerDTO.getEmail()));
         if(isEmailRegistered.isPresent()) {
-            error.add(new ErrorListDTO("Email", "Email já cadastrado."));
+            error.add(new ErrorListDTO("email", "Email já cadastrado."));
         }
 
         if(!error.isEmpty()) {

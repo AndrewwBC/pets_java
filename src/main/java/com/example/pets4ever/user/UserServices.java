@@ -7,13 +7,14 @@ import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
-import com.example.pets4ever.user.DTO.*;
-import com.example.pets4ever.user.DTO.Profile.FollowersData;
-import com.example.pets4ever.user.DTO.Profile.FollowersList;
-import com.example.pets4ever.user.DTO.Profile.FollowingsData;
-import com.example.pets4ever.user.DTO.Profile.UserProfileDTO;
-import com.example.pets4ever.user.DTO.Register.RegisterDTO;
-import com.example.pets4ever.user.DTO.UpdateDTO.UpdateDTO;
+import com.example.pets4ever.user.dtos.*;
+import com.example.pets4ever.user.dtos.Profile.FollowersData;
+import com.example.pets4ever.user.dtos.Profile.FollowersList;
+import com.example.pets4ever.user.dtos.Profile.FollowingsData;
+import com.example.pets4ever.user.dtos.Register.RegisterDTO;
+import com.example.pets4ever.user.dtos.UpdateDTO.UpdateDTO;
+import com.example.pets4ever.user.responses.ChangeProfilePictureResponse;
+import com.example.pets4ever.user.responses.ProfileResponse;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +45,7 @@ public class UserServices {
         this.amazonClient = amazonClient;
     }
 
-    public UserProfileDTO profile(String userId) {
+    public ProfileResponse profile(String userId) {
 
         User user =  this.userRepository.findById(userId).get();
 
@@ -76,9 +77,7 @@ public class UserServices {
         }).collect(Collectors.toList());
 
 
-        UserProfileDTO userProfileDTO = UserProfileDTO.fromData(user, followersData, followingOfProfileDTOS, postResponseDTOList);
-
-        return userProfileDTO;
+        return ProfileResponse.fromData(user, followersData, followingOfProfileDTOS, postResponseDTOList);
     }
     public User register(RegisterDTO registerDTO) {
 
@@ -116,28 +115,27 @@ public class UserServices {
         return null;
     }
 
-    public User delete(String userId) {
+    public String delete(String userId) {
 
         Optional<User> userToBeDeleted = this.userRepository.findById(userId);
 
         if(userToBeDeleted.isPresent()) {
             this.userRepository.delete(userToBeDeleted.get());
-            return userToBeDeleted.get();
+            return userToBeDeleted.get().getEmail();
         }
         return null;
     }
 
-    public User changeProfilePicture(ProfileImg profileImg, String userId) {
+    public ChangeProfilePictureResponse changeProfilePicture(ProfileImg profileImg, String userId) {
 
         Optional<User> user = this.userRepository.findById(userId);
-
         String pictureUrl = this.amazonClient.uploadFile(profileImg.getFile());
-        System.out.println(pictureUrl);
 
         if(user.isPresent()) {
             user.get().setUserProfilePhotoUrl(pictureUrl);
             userRepository.save(user.get());
-            return user.get();
+
+            return new ChangeProfilePictureResponse("Imagem atualizada!");
         }
 
         return null;

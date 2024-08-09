@@ -1,12 +1,8 @@
-package com.example.pets4ever.user.DTO.SignIn;
+package com.example.pets4ever.user.dtos.SignIn;
 
 import com.example.pets4ever.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 public record SignInResponseDTO(
