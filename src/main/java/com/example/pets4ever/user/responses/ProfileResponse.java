@@ -2,8 +2,8 @@ package com.example.pets4ever.user.responses;
 
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.user.User;
-import com.example.pets4ever.user.dtos.Profile.FollowersData;
-import com.example.pets4ever.user.dtos.Profile.FollowingsData;
+import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
+import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,11 +1,11 @@
 package com.example.pets4ever.authentication;
 
-import com.example.pets4ever.Infra.TokenService;
-import com.example.pets4ever.user.dtos.SignIn.SignInDTO;
-import com.example.pets4ever.user.dtos.SignIn.SignInResponseDTO;
-import com.example.pets4ever.user.dtos.SignIn.SignInWithSessionDTO;
+import com.example.pets4ever.infra.security.TokenService;
+import com.example.pets4ever.user.dtos.signInDTO.SignInDTO;
+import com.example.pets4ever.user.dtos.signInDTO.SignInResponseDTO;
+import com.example.pets4ever.user.dtos.signInDTO.SignInWithSessionDTO;
 import com.example.pets4ever.user.User;
-import com.example.pets4ever.user.UserServices;
+import com.example.pets4ever.user.UserService;
 import com.example.pets4ever.user.validations.login.LoginValidate;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
@@ -29,7 +29,7 @@ public class AuthenticationController {
     @Autowired
     TokenService tokenService;
     @Autowired
-    UserServices userServices;
+    UserService userService;
     @Autowired
     List<LoginValidate> loginValidate;
     @Autowired
@@ -39,13 +39,15 @@ public class AuthenticationController {
 
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signin(@RequestBody @Valid SignInDTO data) {
+        this.loginValidate.forEach(validation -> {validation.validate(data);
+        });
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
         var userId = tokenService.validateTokenAndGetUserId(token);
 
-        User user = this.userServices.signin(userId);
+        User user = this.userService.signin(userId);
 
         return ResponseEntity.ok(new SignInResponseDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl(), token));
     }
@@ -53,7 +55,7 @@ public class AuthenticationController {
     @PostMapping("/loginwithsession")
     public ResponseEntity<SignInWithSessionDTO> loginWithSession(@RequestHeader("Authorization") String bearerToken) {
         String userId = getUserIdFromToken.recoverUserId(bearerToken);
-        User user = this.userServices.signin(userId);
+        User user = this.userService.signin(userId);
         return ResponseEntity.ok(new SignInWithSessionDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl()));
     }
 

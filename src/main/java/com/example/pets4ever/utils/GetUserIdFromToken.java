@@ -1,7 +1,7 @@
 package com.example.pets4ever.utils;
 
 
-import com.example.pets4ever.Infra.TokenService;
+import com.example.pets4ever.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

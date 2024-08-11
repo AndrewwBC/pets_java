@@ -1,8 +1,8 @@
 package com.example.pets4ever.user.validations.register;
 
-import com.example.pets4ever.Infra.exception.dto.ErrorListDTO;
-import com.example.pets4ever.Infra.exception.register.MyRegisterException;
-import com.example.pets4ever.user.dtos.Register.RegisterDTO;
+import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
+import com.example.pets4ever.infra.exceptions.user.register.MyRegisterException;
+import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
