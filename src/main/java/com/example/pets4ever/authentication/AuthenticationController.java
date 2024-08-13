@@ -6,7 +6,7 @@ import com.example.pets4ever.user.dtos.signInDTO.SignInResponseDTO;
 import com.example.pets4ever.user.dtos.signInDTO.SignInWithSessionDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserService;
-import com.example.pets4ever.user.validations.login.LoginValidate;
+import com.example.pets4ever.user.validations.login.SignInValidate;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class AuthenticationController {
     @Autowired
     UserService userService;
     @Autowired
-    List<LoginValidate> loginValidate;
+    SignInValidate signInValidate;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -39,8 +39,7 @@ public class AuthenticationController {
 
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signin(@RequestBody @Valid SignInDTO data) {
-        this.loginValidate.forEach(validation -> {validation.validate(data);
-        });
+        this.signInValidate.allValidations(data);
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);

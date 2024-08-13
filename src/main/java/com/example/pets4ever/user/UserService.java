@@ -82,7 +82,7 @@ public class UserService {
 
         return ProfileResponse.fromData(user, followersData, followingOfProfileDTOS, postResponseDTOList);
     }
-    public String register(RegisterDTO registerDTO) throws Exception {
+    public String create(RegisterDTO registerDTO) throws Exception {
 
         this.registerValidate.forEach(v -> v.validate(registerDTO));
 

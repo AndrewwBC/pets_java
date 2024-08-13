@@ -45,11 +45,18 @@ public class CommentService {
     }
 
     public List<CommentPostResponseDTO> getCommentsFromPostId(String postId) {
-        List<Comment> comments = this.commentRepository.findByPostId(postId);
+        List<Comment> comments = null;
 
-        List<CommentPostResponseDTO> postComments = comments.stream()
+        this.postRepository.findById(postId).orElseThrow(() ->
+                new NoSuchElementException("Postagem não encontrada. Verifique o ID!"));
+
+        try {
+            comments = this.commentRepository.findByPostId(postId);
+        } catch (Exception e) {
+            throw new NoSuchElementException("Comentários não encontrados!");
+        }
+
+        return comments.stream()
                 .map(comment -> CommentPostResponseDTO.fromData(comment.getUser(), comment.getComment())).toList();
-
-        return postComments;
     }
 }

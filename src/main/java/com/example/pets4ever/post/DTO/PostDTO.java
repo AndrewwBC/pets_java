@@ -2,27 +2,25 @@ package com.example.pets4ever.post.DTO;
 
 import com.example.pets4ever.user.User;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-@Setter
-@Getter
-public class PostDTO {
+import java.time.LocalDate;
 
-    private String description;
-
-    @NotBlank(message = "Insira uma imagem!")
-    private MultipartFile file;
-
-    private String creationDate;
-
-    private String isStorie;
-    public PostDTO(String description,MultipartFile file , String creationDate, String isStorie) {
+public record PostDTO(
+        String description,
+        @NotNull(message = "A postagem deve incluir uma imagem!")
+        MultipartFile file,
+        String isStorie
+)
+{
+    public PostDTO(String description,MultipartFile file, String isStorie) {
         this.description = description;
         this.file = file;
-        this.creationDate = creationDate;
         this.isStorie = isStorie;
     }
 }

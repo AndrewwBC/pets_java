@@ -2,9 +2,12 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
+import com.example.pets4ever.post.DTO.PostShowDTO;
 import com.example.pets4ever.post.DTO.UpdatePostToReceiveLikeDTO;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.persistence.PersistenceException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("api/v1/post")
 public class PostController {
 
     @Autowired
@@ -21,20 +24,18 @@ public class PostController {
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
     @GetMapping("/show")
-    public ResponseEntity<List<PostResponseDTO>> show(@RequestHeader("Authorization") String bearerToken){
-        String userId = getUserIdFromToken.recoverUserId(bearerToken);
-
-        List<PostResponseDTO> allPosts = this.postServices.getPosts(userId);
-        return ResponseEntity.ok().body(allPosts);
+    public ResponseEntity<List<PostResponseDTO>> show(@RequestBody PostShowDTO postShowDTO){
+        return ResponseEntity.ok().body(this.postServices.getPosts(postShowDTO.userId()));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity.BodyBuilder create(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.recoverUserId(bearerToken);
+    @PostMapping("/create/{userId}")
+    public ResponseEntity.BodyBuilder create(@PathVariable String userId, @ModelAttribute @Valid PostDTO postDTO) {
 
-        System.out.println(postDTO.getIsStorie());
-
-        Post newPost = postServices.insert(postDTO, userId);
+        try {
+            postServices.create(postDTO, userId);
+        } catch (PersistenceException e) {
+            throw new PersistenceException("Erro ao criar postagem");
+        }
         return ResponseEntity.status(HttpStatus.CREATED);
     }
 
@@ -50,7 +51,7 @@ public class PostController {
     public ResponseEntity<Post> createStorie(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
         String userId = getUserIdFromToken.recoverUserId(bearerToken);
 
-        Post newStorie = postServices.insert(postDTO, userId);
+        Post newStorie = postServices.create(postDTO, userId);
 
         return ResponseEntity.ok().body(newStorie);
     }

@@ -8,8 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +32,12 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String description;
+
+    @NotNull(message = "A postagem deve ter a URL da imagem!")
     private String imageUrl;
-    private String creationDate;
+
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private String creationDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now());
 
     @ManyToOne(cascade = CascadeType.REFRESH)
     private User user;
@@ -43,10 +52,9 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch=FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 
-    public Post(String description, String imageUrl, String creationDate, User user){
+    public Post(String description, String imageUrl, User user){
         this.description = description;
         this.imageUrl = imageUrl;
-        this.creationDate = creationDate;
         this.user = user;
     }
 
