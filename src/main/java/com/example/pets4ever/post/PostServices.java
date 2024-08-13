@@ -35,7 +35,7 @@ public class PostServices {
         this.amazonClient = amazonClient;
     }
 
-    public Post create(PostDTO postDTO, String userId) throws WrongFileType {
+    public Post create(PostDTO postDTO, String userId) {
 
         this.postValidations.allValidations(postDTO);
 

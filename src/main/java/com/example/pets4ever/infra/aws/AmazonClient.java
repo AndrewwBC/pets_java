@@ -9,11 +9,13 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import jakarta.annotation.PostConstruct;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,18 +61,26 @@ public class AmazonClient {
     }
 
     public String uploadFile(MultipartFile multipartFile) {
-        String fileName = generateFileName(multipartFile);
-
         try {
+            System.out.println(multipartFile.getOriginalFilename());
             File file = convertMultiPartToFile(multipartFile);
-            uploadFileTos3bucket(fileName, file);
 
-            System.out.println(fileName);
+            File input = new File(file.getName());
+            File output = new File(file.getName());
+
+            Thumbnails.of(input)
+                    .scale(1)
+                    .outputQuality(0.5)
+                    .toFile(output);
+
+            uploadFileTos3bucket(file.getName(), file);
+
+            System.out.println(file.getName());
 
         } catch (Exception e) {
             e.getMessage();
         }
-        return fileName;
+        return "Uploaded!";
     }
 
     public String deleteFileFromS3Bucket(String fileName) {

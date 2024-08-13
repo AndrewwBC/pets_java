@@ -3,6 +3,7 @@ package com.example.pets4ever.post.DTO;
 import com.example.pets4ever.user.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

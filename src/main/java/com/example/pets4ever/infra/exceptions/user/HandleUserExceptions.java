@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
-public class HandlePostExceptions {
+public class HandleUserExceptions {
 
     @ExceptionHandler(UserValidationsException.class)
     public ResponseEntity<List<ErrorListDTO>> handleExceptionsThrownByAllValidations(UserValidationsException customRegisterException){

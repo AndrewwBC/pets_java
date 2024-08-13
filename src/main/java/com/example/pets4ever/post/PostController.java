@@ -30,12 +30,7 @@ public class PostController {
 
     @PostMapping("/create/{userId}")
     public ResponseEntity.BodyBuilder create(@PathVariable String userId, @ModelAttribute @Valid PostDTO postDTO) {
-
-        try {
-            postServices.create(postDTO, userId);
-        } catch (PersistenceException e) {
-            throw new PersistenceException("Erro ao criar postagem");
-        }
+        postServices.create(postDTO, userId);
         return ResponseEntity.status(HttpStatus.CREATED);
     }
 

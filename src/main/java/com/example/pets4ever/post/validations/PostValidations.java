@@ -7,20 +7,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostValidations implements PostValidate{
     @Override
-    public void fileFormat(PostDTO postDTO) throws WrongFileType {
+    public void fileFormat(PostDTO postDTO) {
 
         String fileFormat = postDTO.file().getContentType();
 
-        if(!fileFormat.contains("jpeg") || !fileFormat.contains("png")){
-            throw new WrongFileType("Formato inválido, utilize JPEG ou PNG!");
-        } else {return;}
+        System.out.println(fileFormat);
+
+        if (!("image/jpeg".equals(fileFormat) || "image/jpg".equals(fileFormat) || "image/png".equals(fileFormat))) {
+            throw new WrongFileType("Formato inválido, utilize JPEG, JPG ou PNG!");
+        }
 
     }
 
     @Override
-    public void allValidations(PostDTO postDTO) throws WrongFileType {
+    public void allValidations(PostDTO postDTO) {
         this.fileFormat(postDTO);
     }
-
-
 }
