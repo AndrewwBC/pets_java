@@ -1,4 +1,4 @@
-package com.example.pets4ever.emailservices;
+package com.example.pets4ever.infra.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

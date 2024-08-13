@@ -1,4 +1,4 @@
-package com.example.pets4ever.aws;
+package com.example.pets4ever.infra.aws;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;

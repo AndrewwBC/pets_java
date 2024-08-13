@@ -1,7 +1,7 @@
 package com.example.pets4ever.user.validations.register;
 
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
-import com.example.pets4ever.infra.exceptions.user.register.MyRegisterException;
+import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
@@ -33,7 +33,7 @@ public class EmailOrUsernameAlreadyInUse implements RegisterValidate{
         }
 
         if(!error.isEmpty()) {
-            throw new MyRegisterException(error);
+            throw new UserValidationsException(error);
         }
     }
 }

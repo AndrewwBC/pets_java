@@ -1,6 +1,6 @@
 package com.example.pets4ever.post;
 
-import com.example.pets4ever.aws.AmazonClient;
+import com.example.pets4ever.infra.aws.AmazonClient;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PostServices {

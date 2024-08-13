@@ -15,6 +15,7 @@ public class CommentDTO {
 
     private String comment;
     private String postId;
+    private String userId;
 
     public CommentDTO(String comment, String postId){
         this.comment = comment;

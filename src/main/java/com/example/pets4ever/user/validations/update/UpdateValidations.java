@@ -1,7 +1,7 @@
 package com.example.pets4ever.user.validations.update;
 
 
-import com.example.pets4ever.infra.exceptions.user.validation.CustomValidationException;
+import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.UserRepository;
@@ -31,7 +31,7 @@ public class UpdateValidations implements UpdateValidate {
         }
 
         if(!errorListDTO.isEmpty()){
-            throw new CustomValidationException(errorListDTO);
+            throw new UserValidationsException(errorListDTO);
         }
 
     }

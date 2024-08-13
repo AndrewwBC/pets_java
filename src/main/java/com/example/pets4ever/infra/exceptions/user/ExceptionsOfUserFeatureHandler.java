@@ -2,9 +2,7 @@ package com.example.pets4ever.infra.exceptions.user;
 
 
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
-import com.example.pets4ever.infra.exceptions.user.login.MyLoginException;
-import com.example.pets4ever.infra.exceptions.user.register.MyRegisterException;
-import com.example.pets4ever.infra.exceptions.user.validation.CustomValidationException;
+import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +16,13 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class ExceptionsOfUserFeatureHandler {
 
-    @ExceptionHandler(CustomValidationException.class)
-    public ResponseEntity<List<ErrorListDTO>> handler(CustomValidationException customRegisterException){
+    @ExceptionHandler(UserValidationsException.class)
+    public ResponseEntity<List<ErrorListDTO>> handleExceptionsThrownByAllValidations(UserValidationsException customRegisterException){
         return ResponseEntity.badRequest().body(customRegisterException.registerErrors);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity handle(ConstraintViolationException exception) {
+    public ResponseEntity<List<ErrorListDTO>> handleConstraintViolationException(ConstraintViolationException exception) {
         List<ErrorListDTO> messages =  new ArrayList<>();
 
         exception.getConstraintViolations().forEach(constraintViolation -> {
@@ -33,16 +31,6 @@ public class ExceptionsOfUserFeatureHandler {
         });
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(messages);
-    }
-
-    @ExceptionHandler(MyRegisterException.class)
-    public ResponseEntity<List<ErrorListDTO>> handler(MyRegisterException myRegisterException){
-        return ResponseEntity.badRequest().body(myRegisterException.registerErrors);
-    }
-
-    @ExceptionHandler(MyLoginException.class)
-    public ResponseEntity<List<ErrorListDTO>> handler(MyLoginException loginException){
-        return ResponseEntity.badRequest().body(loginException.loginError);
     }
 
     @ExceptionHandler(NoSuchElementException.class)

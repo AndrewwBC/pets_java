@@ -1,9 +1,8 @@
 package com.example.pets4ever.user;
 
 
-import com.amazonaws.services.iot.model.ResourceNotFoundException;
 import com.example.pets4ever.infra.security.TokenService;
-import com.example.pets4ever.aws.AmazonClient;
+import com.example.pets4ever.infra.aws.AmazonClient;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
