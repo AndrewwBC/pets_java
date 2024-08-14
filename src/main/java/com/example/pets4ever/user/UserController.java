@@ -3,6 +3,7 @@ package com.example.pets4ever.user;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
+import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
 import com.example.pets4ever.user.responses.ProfileResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PutMapping("/change_profile_picture/{userId}")
-    public ResponseEntity<String> changeProfilePicture(@PathVariable String userId, @ModelAttribute ProfileImg profileImg, @RequestHeader("Authorization") String bearerToken){
+    public ResponseEntity<ChangeProfileImageResponse> changeProfilePicture(@PathVariable String userId, @ModelAttribute ProfileImg profileImg, @RequestHeader("Authorization") String bearerToken){
         return ResponseEntity.ok(userService.changeProfilePicture(profileImg, userId));
     }
 

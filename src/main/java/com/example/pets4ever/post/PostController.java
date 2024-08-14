@@ -4,6 +4,7 @@ import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.DTO.PostShowDTO;
 import com.example.pets4ever.post.DTO.UpdatePostToReceiveLikeDTO;
+import com.example.pets4ever.post.response.CreateResponse;
 import com.example.pets4ever.utils.GetUserIdFromToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.PersistenceException;
@@ -29,9 +30,8 @@ public class PostController {
     }
 
     @PostMapping("/create/{userId}")
-    public ResponseEntity.BodyBuilder create(@PathVariable String userId, @ModelAttribute @Valid PostDTO postDTO) {
-        postServices.create(postDTO, userId);
-        return ResponseEntity.status(HttpStatus.CREATED);
+    public ResponseEntity<CreateResponse> create(@PathVariable String userId, @ModelAttribute @Valid PostDTO postDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(postServices.create(postDTO, userId));
     }
 
     @GetMapping("/profile")
@@ -42,14 +42,14 @@ public class PostController {
 
     }
 
-    @PostMapping("/createStorie")
-    public ResponseEntity<Post> createStorie(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.recoverUserId(bearerToken);
-
-        Post newStorie = postServices.create(postDTO, userId);
-
-        return ResponseEntity.ok().body(newStorie);
-    }
+//    @PostMapping("/createStorie")
+//    public ResponseEntity<Post> createStorie(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
+//        String userId = getUserIdFromToken.recoverUserId(bearerToken);
+//
+//        Post newStorie = postServices.create(postDTO, userId);
+//
+//        return ResponseEntity.ok().body(newStorie);
+//    }
 
     @PostMapping("/postlike")
     public ResponseEntity<String> updatePostToReceiveLike(@ModelAttribute UpdatePostToReceiveLikeDTO data, @RequestHeader("Authorization") String bearerToken) {

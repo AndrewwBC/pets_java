@@ -6,13 +6,16 @@ import com.example.pets4ever.infra.exceptions.post.WrongFileType;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
+import com.example.pets4ever.post.response.CreateResponse;
 import com.example.pets4ever.post.validations.PostValidations;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
+import jakarta.persistence.PersistenceException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -35,19 +38,24 @@ public class PostServices {
         this.amazonClient = amazonClient;
     }
 
-    public Post create(PostDTO postDTO, String userId) {
+    public CreateResponse create(PostDTO postDTO, String userId) {
 
         this.postValidations.allValidations(postDTO);
+        User user = this.userRepository.findById(userId).orElseThrow(() ->
+                new NoSuchElementException("Usuário não encontrado!"));
 
-        String fileName = amazonClient.uploadFile(postDTO.file());
+        try {
+            String uniqueFilename = this.amazonClient.uploadFile(postDTO.file());
+            Post postToBeInserted = new Post(postDTO.description(), uniqueFilename, user);
 
-        Optional<User> user = this.userRepository.findById(userId);
-
-        if(user.isPresent()) {
-            Post postToBeInserted = new Post(postDTO.description(), fileName, user.get());
-            return this.postRepository.save(postToBeInserted);
+            Post createdPost = this.postRepository.save(postToBeInserted);
+            return new CreateResponse(createdPost.getCreationDate(), createdPost.getImageUrl());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (PersistenceException e) {
+            throw new PersistenceException("Erro ao criar a postagem.");
         }
-        return null;
+
     }
     public List<PostResponseDTO> getPosts(String userId) {
         System.out.println(userId);

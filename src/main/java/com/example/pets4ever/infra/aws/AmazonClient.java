@@ -1,5 +1,7 @@
 package com.example.pets4ever.infra.aws;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -10,16 +12,15 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import jakarta.annotation.PostConstruct;
 
 import net.coobird.thumbnailator.Thumbnails;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class AmazonClient {
@@ -60,27 +61,28 @@ public class AmazonClient {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-    public String uploadFile(MultipartFile multipartFile) {
+    public String uploadFile(MultipartFile multipartFile) throws IOException {
         try {
-            System.out.println(multipartFile.getOriginalFilename());
             File file = convertMultiPartToFile(multipartFile);
+            String originalFilename = multipartFile.getOriginalFilename();
+
+            assert originalFilename != null;
+            String uniqueFilename = generateUniqueFilename(originalFilename);
 
             File input = new File(file.getName());
             File output = new File(file.getName());
 
             Thumbnails.of(input)
                     .scale(1)
-                    .outputQuality(0.5)
+                    .outputQuality(0.2)
                     .toFile(output);
 
-            uploadFileTos3bucket(file.getName(), file);
+            uploadFileTos3bucket(uniqueFilename, output);
 
-            System.out.println(file.getName());
-
-        } catch (Exception e) {
-            e.getMessage();
+            return uniqueFilename;
+        } catch (AmazonClientException exception) {
+            throw new AmazonClientException("Erro ao realizar o upload", exception.getCause());
         }
-        return "Uploaded!";
     }
 
     public String deleteFileFromS3Bucket(String fileName) {
@@ -89,7 +91,13 @@ public class AmazonClient {
         return "Successfully deleted";
     }
 
-
-
+    private String generateUniqueFilename(String originalFilename) {
+        String extension = "";
+        int dotIndex = originalFilename.lastIndexOf('.');
+        if (dotIndex >= 0) {
+            extension = originalFilename.substring(dotIndex);
+        }
+        return UUID.randomUUID().toString() + extension;
+    }
 
 }

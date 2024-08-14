@@ -13,14 +13,17 @@ import com.example.pets4ever.user.dtos.profileDTO.FollowersList;
 import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
+import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
 import com.example.pets4ever.user.responses.ProfileResponse;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
 import com.example.pets4ever.user.validations.update.UpdateValidate;
+import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,14 +46,15 @@ public class UserService {
     @Autowired
     UpdateValidate updateValidate;
     private final AmazonClient amazonClient;
+
     @Autowired
     UserService(AmazonClient amazonClient) {
         this.amazonClient = amazonClient;
     }
 
-    public ProfileResponse profile(String userId){
+    public ProfileResponse profile(String userId) {
 
-        User user =  this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+        User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
         List<User> followers = user.getFollowers();
         List<User> following = user.getFollowing();
@@ -68,7 +72,7 @@ public class UserService {
 
         List<PostResponseDTO> postResponseDTOList = userPosts.stream().map(post -> {
             List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
-                    new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getUser().getUsername(),comment.getComment())).collect(Collectors.toList());
+                    new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getUser().getUsername(), comment.getComment())).collect(Collectors.toList());
 
             Long quantityOfLikes = (long) post.getLikes().size();
 
@@ -76,17 +80,18 @@ public class UserService {
             boolean userLikedThisPost = userId.equals(post.getUser().getId());
 
 
-            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
+            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes, listOflikes, commentPostResponseDTOS);
         }).collect(Collectors.toList());
 
 
         return ProfileResponse.fromData(user, followersData, followingOfProfileDTOS, postResponseDTOList);
     }
+
     public String create(RegisterDTO registerDTO) throws Exception {
 
         this.registerValidate.forEach(v -> v.validate(registerDTO));
 
-        if(Objects.equals(registerDTO.getEmail(), admMail)) {
+        if (Objects.equals(registerDTO.getEmail(), admMail)) {
             this.userRole = UserRole.ADMIN;
         } else {
             this.userRole = UserRole.USER;
@@ -99,7 +104,7 @@ public class UserService {
         try {
             userRepository.save(newUser);
             return "Usuário registrado com sucesso!";
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new Exception("Erro no registro", e.getCause());
         }
     }
@@ -123,28 +128,32 @@ public class UserService {
 
         Optional<User> userToBeDeleted = this.userRepository.findById(userId);
 
-        if(userToBeDeleted.isPresent()) {
+        if (userToBeDeleted.isPresent()) {
             this.userRepository.delete(userToBeDeleted.get());
             return userToBeDeleted.get().getEmail();
         }
         return null;
     }
 
-    public String changeProfilePicture(ProfileImg profileImg, String userId) {
+    public ChangeProfileImageResponse changeProfilePicture(ProfileImg profileImg, String userId) {
 
-        Optional<User> user = this.userRepository.findById(userId);
-        String pictureUrl = this.amazonClient.uploadFile(profileImg.getFile());
-
-        if(user.isPresent()) {
-            user.get().setUserProfilePhotoUrl(pictureUrl);
-            userRepository.save(user.get());
-
-            return "Imagem atualizada!";
+        User user = this.userRepository.findById(userId).orElseThrow(() ->
+                new NoSuchElementException("Usuário não encontrado."));
+        try {
+            String uniqueFilename = this.amazonClient.uploadFile(profileImg.getFile());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        return null;
-    }
 
+        try {
+            user.setUserProfilePhotoUrl(profileImg.getFile().getOriginalFilename());
+            userRepository.save(user);
+            return new ChangeProfileImageResponse(profileImg.getFile().getName(), user.getUsername());
+        } catch (PersistenceException e) {
+            throw new PersistenceException("Erro ao mudar a imagem de perfil.");
+        }
+    }
 
     public User signin(String userId) {
         return this.userRepository.findById(userId).get();
