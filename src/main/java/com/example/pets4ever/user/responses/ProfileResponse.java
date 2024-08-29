@@ -4,6 +4,7 @@ import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
 import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
+import com.example.pets4ever.user.dtos.profileDTO.UserPostsAndQuantityOfPosts;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -18,17 +19,17 @@ public record ProfileResponse (
         String email,
         String userImageProfileUrl,
         FollowersData followers,
-        List<FollowingsData> following,
-        List<PostResponseDTO> posts
+        FollowingsData following,
+        UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts
 ){
-    public static ProfileResponse fromData(User user, FollowersData followersData, List<FollowingsData> followingOfProfileDTOS, List<PostResponseDTO> postResponseDTOList) {
+    public static ProfileResponse fromData(User user, FollowersData followersData, FollowingsData followingOfProfileDTOS, UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts) {
         return new ProfileResponse(
                 user.getUsername(),
                 user.getEmail(),
                 user.getUserProfilePhotoUrl(),
                 followersData,
                 followingOfProfileDTOS,
-                postResponseDTOList
+                userPostsAndQuantityOfPosts
         );
     }
 }

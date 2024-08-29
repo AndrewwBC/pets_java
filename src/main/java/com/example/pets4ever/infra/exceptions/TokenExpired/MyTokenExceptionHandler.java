@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 
 @ControllerAdvice
-public class MyTokenExpiredExceptionHandler {
+public class MyTokenExceptionHandler {
 
     @ExceptionHandler(JWTVerificationException.class)
-    @ResponseBody
-    public void handleTokenExpiredException(HttpServletResponse response, Exception exception) throws IOException {
+    public void handleTokenException(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write("Token expirado ou invalido. Logue novamente!");
     }

@@ -41,7 +41,7 @@ public class CommentService {
             throw new PersistenceException("Erro ao registrar comentário");
         }
 
-        return "Okay";
+        return "Comentário inserido";
     }
 
     public List<CommentPostResponseDTO> getCommentsFromPostId(String postId) {

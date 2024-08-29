@@ -17,16 +17,18 @@ public class CommentDTO {
     private String postId;
     private String userId;
 
-    public CommentDTO(String comment, String postId){
+    public CommentDTO(String comment, String postId, String userId){
         this.comment = comment;
         this.postId = postId;
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "CommentDTO{" +
                 "comment='" + comment + '\'' +
-                ", postId=" + postId +
+                ", postId='" + postId + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }

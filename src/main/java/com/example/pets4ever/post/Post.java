@@ -3,14 +3,9 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.user.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -26,7 +21,6 @@ import java.util.List;
 @Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="isStorie", discriminatorType = DiscriminatorType.STRING)
-
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -11,15 +11,15 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class FollowersData {
-    private List<FollowersList> followersList;
-    private long quantityOfFollowers;
+    private List<UserIdNameAndImageProps> followersList;
+    private long quantity;
 
 
     @Override
     public String toString() {
         return "FollowersData{" +
                 "followersList=" + followersList +
-                ", quantityOfFollowers='" + quantityOfFollowers + '\'' +
+                ", quantityOfFollowers='" + quantity + '\'' +
                 '}';
     }
 }

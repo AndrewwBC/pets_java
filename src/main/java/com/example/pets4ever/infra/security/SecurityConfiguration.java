@@ -29,7 +29,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/signin").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/user/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
                         .requestMatchers(HttpMethod.POST, "/email/send/{email}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").hasRole("ADMIN")
                         .anyRequest().authenticated()

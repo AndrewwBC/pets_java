@@ -24,22 +24,23 @@ public class PostController {
     PostServices postServices;
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
-    @GetMapping("/show")
-    public ResponseEntity<List<PostResponseDTO>> show(@RequestBody PostShowDTO postShowDTO){
-        return ResponseEntity.ok().body(this.postServices.getPosts(postShowDTO.userId()));
+
+    @GetMapping("/")
+    public ResponseEntity<List<PostResponseDTO>> index(){
+        return ResponseEntity.ok().body(this.postServices.getAllPosts());
     }
 
-    @PostMapping("/create/{userId}")
-    public ResponseEntity<CreateResponse> create(@PathVariable String userId, @ModelAttribute @Valid PostDTO postDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(postServices.create(postDTO, userId));
+    //busca o post de acordo com o usuario para tratar likes etc
+    //fazer no futuro um apenas para post, sem depender de user
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponseDTO> show(@PathVariable String postId, @RequestBody PostShowDTO postShowDTO){
+        return ResponseEntity.ok().body(this.postServices.getPost(postId,postShowDTO.userId()));
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<?> profile(@RequestHeader("Authorization") String bearerToken) throws JsonProcessingException {
-        String userId = getUserIdFromToken.recoverUserId(bearerToken);
-
-        return ResponseEntity.ok("Oi");
-
+    @PostMapping("/")
+    public ResponseEntity<CreateResponse> create(@ModelAttribute @Valid PostDTO postDTO) {
+        System.out.println(postDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(postServices.create(postDTO));
     }
 
 //    @PostMapping("/createStorie")
@@ -51,20 +52,9 @@ public class PostController {
 //        return ResponseEntity.ok().body(newStorie);
 //    }
 
-    @PostMapping("/postlike")
-    public ResponseEntity<String> updatePostToReceiveLike(@ModelAttribute UpdatePostToReceiveLikeDTO data, @RequestHeader("Authorization") String bearerToken) {
-        String userId = getUserIdFromToken.recoverUserId(bearerToken);
-
-        System.out.println(data);
-
-        String response = this.postServices.UpdatePostToReceiveLikesService(data.getPostId(), userId);
-
-        return ResponseEntity.ok().body(response);
+    @PostMapping("/postlike/{userId}")
+    public ResponseEntity<String> updatePostToReceiveLike(@PathVariable String userId, @ModelAttribute UpdatePostToReceiveLikeDTO data) {
+        return ResponseEntity.ok().body(this.postServices.UpdatePostToReceiveLikesService(data.getPostId(), userId));
     }
 
-    @GetMapping("/{id}/{userId}")
-    public ResponseEntity<?> getPost(@PathVariable String id, @PathVariable String userId) {
-        PostResponseDTO postResponseDTO = this.postServices.getPost(id, userId);
-        return ResponseEntity.status(HttpStatus.OK).body(postResponseDTO);
-    }
 }

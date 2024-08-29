@@ -9,14 +9,18 @@ import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
-import com.example.pets4ever.user.dtos.profileDTO.FollowersList;
+import com.example.pets4ever.user.dtos.profileDTO.UserIdNameAndImageProps;
 import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
+import com.example.pets4ever.user.dtos.profileDTO.UserPostsAndQuantityOfPosts;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
+import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
 import com.example.pets4ever.user.responses.ProfileResponse;
+import com.example.pets4ever.user.responses.UpdateEmailResponse;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
 import com.example.pets4ever.user.validations.update.UpdateValidate;
+import com.example.pets4ever.user.validations.update.updateProfileImage.UpdateProfileImageValidate;
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +36,6 @@ public class UserService {
 
     @Value("${ADM_MAIL}")
     private String admMail;
-    private UserRole userRole;
 
     @Autowired
     UserRepository userRepository;
@@ -44,6 +47,9 @@ public class UserService {
     List<RegisterValidate> registerValidate;
 
     @Autowired
+    UpdateProfileImageValidate updateProfileImageValidate;
+
+    @Autowired
     UpdateValidate updateValidate;
     private final AmazonClient amazonClient;
 
@@ -52,6 +58,9 @@ public class UserService {
         this.amazonClient = amazonClient;
     }
 
+    public List<User> index() {
+        return this.userRepository.findAll();
+    }
     public ProfileResponse profile(String userId) {
 
         User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
@@ -60,15 +69,17 @@ public class UserService {
         List<User> following = user.getFollowing();
         List<Post> userPosts = user.getPosts();
 
-        List<FollowersList> followerOfProfileDTOS = followers.stream().map(followUser ->
-                new FollowersList(followUser.getUsername())
+        List<UserIdNameAndImageProps> listOfUsersToFollowersData = followers.stream().map(followUser ->
+                new UserIdNameAndImageProps(followUser.getUsername(), followUser.getId(), followUser.getUserProfilePhotoUrl())
         ).collect(Collectors.toList());
 
-        FollowersData followersData = new FollowersData(followerOfProfileDTOS, followers.size());
+        FollowersData followersData = new FollowersData(listOfUsersToFollowersData, followers.size());
 
-        List<FollowingsData> followingOfProfileDTOS = following.stream().map(followingUser ->
-                new FollowingsData(followingUser.getUsername())
+        List<UserIdNameAndImageProps> listOfUsersToFollowingData = following.stream().map(followingUser ->
+                new UserIdNameAndImageProps(followingUser.getUsername(), followingUser.getId(), followingUser.getUserProfilePhotoUrl())
         ).collect(Collectors.toList());
+
+        FollowingsData followingsData = new FollowingsData(listOfUsersToFollowingData, listOfUsersToFollowingData.size());
 
         List<PostResponseDTO> postResponseDTOList = userPosts.stream().map(post -> {
             List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
@@ -83,18 +94,20 @@ public class UserService {
             return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes, listOflikes, commentPostResponseDTOS);
         }).collect(Collectors.toList());
 
+        UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts = new UserPostsAndQuantityOfPosts(postResponseDTOList, postResponseDTOList.size());
 
-        return ProfileResponse.fromData(user, followersData, followingOfProfileDTOS, postResponseDTOList);
+        return ProfileResponse.fromData(user, followersData, followingsData, userPostsAndQuantityOfPosts);
     }
 
     public String create(RegisterDTO registerDTO) throws Exception {
 
         this.registerValidate.forEach(v -> v.validate(registerDTO));
 
+        UserRole userRole;
         if (Objects.equals(registerDTO.getEmail(), admMail)) {
-            this.userRole = UserRole.ADMIN;
+            userRole = UserRole.ADMIN;
         } else {
-            this.userRole = UserRole.USER;
+            userRole = UserRole.USER;
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.getPassword());
@@ -109,7 +122,7 @@ public class UserService {
         }
     }
 
-    public User update(UpdateDTO updateDTO, String userId) {
+    public String update(UpdateDTO updateDTO, String userId) {
 
         this.updateValidate.validate(updateDTO);
 
@@ -118,10 +131,25 @@ public class UserService {
 
         userToBeUpdated.setName(updateDTO.name());
         userToBeUpdated.setEmail(updateDTO.email());
-        userToBeUpdated.setPassword(updateDTO.password());
 
-        return userRepository.save(userToBeUpdated);
+        userRepository.save(userToBeUpdated);
 
+        return "Usuário atualizado";
+    }
+
+    public UpdateEmailResponse updateEmail(UpdateEmailDTO updateEmailDTO, String userId) {
+
+        User user = this.userRepository.findById(userId).orElseThrow(()
+                -> new NoSuchElementException("Usuário não encontrado"));
+
+        try {
+            user.setEmail(updateEmailDTO.email());
+
+            this.userRepository.save(user);
+            return new UpdateEmailResponse("Email atualizado!");
+        } catch(PersistenceException exception) {
+            throw new PersistenceException("Erro ao editar o email.");
+        }
     }
 
     public String delete(String userId) {
@@ -137,26 +165,27 @@ public class UserService {
 
     public ChangeProfileImageResponse changeProfilePicture(ProfileImg profileImg, String userId) {
 
+        System.out.println(profileImg);
+        this.updateProfileImageValidate.validate(profileImg.getFile());
+
         User user = this.userRepository.findById(userId).orElseThrow(() ->
                 new NoSuchElementException("Usuário não encontrado."));
         try {
             String uniqueFilename = this.amazonClient.uploadFile(profileImg.getFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            user.setUserProfilePhotoUrl(uniqueFilename);
 
-
-        try {
-            user.setUserProfilePhotoUrl(profileImg.getFile().getOriginalFilename());
             userRepository.save(user);
             return new ChangeProfileImageResponse(profileImg.getFile().getName(), user.getUsername());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } catch (PersistenceException e) {
             throw new PersistenceException("Erro ao mudar a imagem de perfil.");
         }
     }
 
     public User signin(String userId) {
-        return this.userRepository.findById(userId).get();
+        return this.userRepository.findById(userId).orElseThrow(() ->
+                new NoSuchElementException("Usuário não encontrado."));
     }
 }
 

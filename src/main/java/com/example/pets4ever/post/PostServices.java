@@ -38,10 +38,10 @@ public class PostServices {
         this.amazonClient = amazonClient;
     }
 
-    public CreateResponse create(PostDTO postDTO, String userId) {
+    public CreateResponse create(PostDTO postDTO) {
 
         this.postValidations.allValidations(postDTO);
-        User user = this.userRepository.findById(userId).orElseThrow(() ->
+        User user = this.userRepository.findById(postDTO.userId()).orElseThrow(() ->
                 new NoSuchElementException("Usuário não encontrado!"));
 
         try {
@@ -57,18 +57,18 @@ public class PostServices {
         }
 
     }
-    public List<PostResponseDTO> getPosts(String userId) {
-        System.out.println(userId);
-        this.userRepository.findById(userId).orElseThrow(() ->
-                new NoSuchElementException("Usuário não encontrado. Verifique o ID!"));
-
+    public List<PostResponseDTO> getAllPosts() {
         List<Post> allPosts =  this.postRepository.findAll();
 
-        List<PostResponseDTO> response = allPosts.stream().map(post -> {
+        return allPosts.stream().map(post -> getPostResponseDTO(post.getUser().getId(), post)).toList();
+    }
+    public PostResponseDTO getPost(String postId, String userId) {
 
-            return getPostResponseDTO(userId, post);
-        }).toList();
-        return response;
+        Post post = this.postRepository.findById(postId).orElseThrow(() ->
+                new NoSuchElementException("Erro ao capturar as postagens!"));
+
+        return getPostResponseDTO(userId, post);
+
     }
     public String UpdatePostToReceiveLikesService(String postId, String userId){
 
@@ -86,15 +86,6 @@ public class PostServices {
         post.getLikes().add(user);
         this.postRepository.save(post);
         return "Curtida adicionada.";
-    }
-
-    public PostResponseDTO getPost(String postId, String userId) {
-
-        Post post = this.postRepository.findById(postId).orElseThrow(() ->
-                new NoSuchElementException("Erro ao capturar as postagens!"));
-
-        return getPostResponseDTO(userId, post);
-
     }
 
     @NotNull

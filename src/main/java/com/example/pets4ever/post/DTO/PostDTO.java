@@ -14,13 +14,16 @@ import java.time.LocalDate;
 
 public record PostDTO(
         String description,
+        @NotNull(message = "Deve conter o ID do usuário!")
+        String userId,
         @NotNull(message = "A postagem deve incluir uma imagem!")
         MultipartFile file,
         String isStorie
 )
 {
-    public PostDTO(String description,MultipartFile file, String isStorie) {
+    public PostDTO(String description,String userId,MultipartFile file, String isStorie) {
         this.description = description;
+        this.userId = userId;
         this.file = file;
         this.isStorie = isStorie;
     }

@@ -9,14 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class FollowersList {
+public class UserIdNameAndImageProps {
 
     private String name;
+    private String userId;
+    private String profileImageUrl;
 
     @Override
     public String toString() {
-        return "FollowersList{" +
+        return "UserIdNameAndImageProps{" +
                 "name='" + name + '\'' +
+                ", userId='" + userId + '\'' +
+                ", profileImageUrl='" + profileImageUrl + '\'' +
                 '}';
     }
 }

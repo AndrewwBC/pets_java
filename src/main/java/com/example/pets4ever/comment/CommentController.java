@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/api/v1/comment")
 public class CommentController {
 
     @Autowired
@@ -28,12 +28,13 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
-    @PostMapping("/store")
-    public ResponseEntity<String> insertComment(@RequestBody CommentDTO commentDTO){
-        return ResponseEntity.ok(this.commentService.insertComment(commentDTO));
+    @PostMapping("/")
+    public ResponseEntity<String> save(@RequestBody CommentDTO commentDTO){
+        System.out.println(commentDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.commentService.insertComment(commentDTO));
     }
 
-    @GetMapping("/comments/{postId}")
+    @GetMapping("/{postId}")
     public ResponseEntity<List<CommentPostResponseDTO>> getComments(@PathVariable String postId){
         return ResponseEntity.status(HttpStatus.OK).body(this.commentService.getCommentsFromPostId(postId));
     }

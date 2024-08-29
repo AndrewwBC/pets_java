@@ -52,10 +52,6 @@ public class AmazonClient {
         return convFile;
     }
 
-    private String generateFileName(MultipartFile multiPart) {
-        return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
-    }
-
     private void uploadFileTos3bucket(String fileName, File file) {
         s3client.putObject(new PutObjectRequest(bucketName, fileName, file)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
@@ -65,6 +61,7 @@ public class AmazonClient {
         try {
             File file = convertMultiPartToFile(multipartFile);
             String originalFilename = multipartFile.getOriginalFilename();
+            System.out.println(originalFilename);
 
             assert originalFilename != null;
             String uniqueFilename = generateUniqueFilename(originalFilename);
@@ -79,6 +76,7 @@ public class AmazonClient {
 
             uploadFileTos3bucket(uniqueFilename, output);
 
+            file.delete();
             return uniqueFilename;
         } catch (AmazonClientException exception) {
             throw new AmazonClientException("Erro ao realizar o upload", exception.getCause());

@@ -2,7 +2,7 @@ package com.example.pets4ever.infra.security;
 
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.pets4ever.infra.exceptions.TokenExpired.MyTokenExpiredExceptionHandler;
+import com.example.pets4ever.infra.exceptions.TokenExpired.MyTokenExceptionHandler;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -28,7 +28,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     UserRepository userRepository;
 
     @Autowired
-    MyTokenExpiredExceptionHandler myTokenExpiredExceptionHandler;
+    MyTokenExceptionHandler myTokenExceptionHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,16 +37,20 @@ public class SecurityFilter extends OncePerRequestFilter {
             if(token != null) {
                 try {
                     String subject = tokenService.validateTokenAndGetUserId(token);
-                    Optional<User> user = userRepository.findById(subject);
+                    User user = userRepository.findById(subject).orElseThrow();
 
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.get().getAuthorities());
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } catch (JWTVerificationException exception) {
                     System.out.println(exception.getMessage());
-                    myTokenExpiredExceptionHandler.handleTokenExpiredException(response, exception);
+                    myTokenExceptionHandler.handleTokenException(response);
                     return;
                 }
             }
+//            else {
+//                myTokenExceptionHandler.handleTokenException(response);
+//                return;
+//            }
             filterChain.doFilter(request, response);
 
     }
