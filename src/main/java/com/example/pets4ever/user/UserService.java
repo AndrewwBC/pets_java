@@ -7,6 +7,7 @@ import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
+import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
 import com.example.pets4ever.user.dtos.profileDTO.UserIdNameAndImageProps;
@@ -16,6 +17,7 @@ import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
+import com.example.pets4ever.user.responses.PatchNameResponse;
 import com.example.pets4ever.user.responses.ProfileResponse;
 import com.example.pets4ever.user.responses.UpdateEmailResponse;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
@@ -111,15 +113,10 @@ public class UserService {
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.getPassword());
-
         User newUser = new User(registerDTO.getName(), registerDTO.getEmail(), encryptedPassword, userRole);
 
-        try {
-            userRepository.save(newUser);
-            return "Usuário registrado com sucesso!";
-        } catch (Exception e) {
-            throw new Exception("Erro no registro", e.getCause());
-        }
+        userRepository.save(newUser);
+        return "Usuário registrado com sucesso!";
     }
 
     public String update(UpdateDTO updateDTO, String userId) {
@@ -163,29 +160,42 @@ public class UserService {
         return null;
     }
 
-    public ChangeProfileImageResponse changeProfilePicture(ProfileImg profileImg, String userId) {
+    public ChangeProfileImageResponse changeProfilePicture(ProfileImg profileImg, String userId) throws IOException {
 
         System.out.println(profileImg);
         this.updateProfileImageValidate.validate(profileImg.getFile());
 
-        User user = this.userRepository.findById(userId).orElseThrow(() ->
-                new NoSuchElementException("Usuário não encontrado."));
-        try {
-            String uniqueFilename = this.amazonClient.uploadFile(profileImg.getFile());
-            user.setUserProfilePhotoUrl(uniqueFilename);
+        User user = this.findUserOrElseThrow(userId);
 
-            userRepository.save(user);
-            return new ChangeProfileImageResponse(profileImg.getFile().getName(), user.getUsername());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (PersistenceException e) {
-            throw new PersistenceException("Erro ao mudar a imagem de perfil.");
-        }
+
+        String uniqueFilename = this.amazonClient.uploadFile(profileImg.getFile());
+        user.setUserProfilePhotoUrl(uniqueFilename);
+
+        userRepository.save(user);
+        return new ChangeProfileImageResponse(profileImg.getFile().getName(), user.getUsername());
+
     }
 
     public User signin(String userId) {
         return this.userRepository.findById(userId).orElseThrow(() ->
                 new NoSuchElementException("Usuário não encontrado."));
+    }
+
+    public PatchNameResponse patchName(String userId, PatchNameDTO patchNameDTO) {
+
+        System.out.println(patchNameDTO);
+        System.out.println(userId);
+        User user = this.findUserOrElseThrow(userId);
+
+        user.setName(patchNameDTO.name());
+        userRepository.save(user);
+
+        return new PatchNameResponse("Nome atualizado");
+    }
+
+    private User findUserOrElseThrow(String userId) {
+        return userRepository.findById(userId).orElseThrow(()
+                -> new NoSuchElementException("Usuário não encontrado."));
     }
 }
 

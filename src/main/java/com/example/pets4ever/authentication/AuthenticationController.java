@@ -51,8 +51,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SignInResponseDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl(), token));
     }
 
-    @PostMapping("/loginwithsession")
+    @GetMapping("/session")
     public ResponseEntity<SignInWithSessionDTO> loginWithSession(@RequestHeader("Authorization") String bearerToken) {
+        System.out.println(bearerToken);
         String userId = getUserIdFromToken.recoverUserId(bearerToken);
         User user = this.userService.signin(userId);
         return ResponseEntity.ok(new SignInWithSessionDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl()));

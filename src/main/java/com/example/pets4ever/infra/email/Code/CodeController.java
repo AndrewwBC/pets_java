@@ -22,7 +22,7 @@ public class CodeController {
     @PostMapping("/validate")
     public ResponseEntity<ValidateResponse> validate(@RequestBody @Valid ValidateDTO validateDTO) {
         System.out.println(validateDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(codeService.validate(validateDTO.code()));
+        return ResponseEntity.status(HttpStatus.OK).body(codeService.validate(validateDTO));
     }
 
 }

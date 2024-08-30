@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,7 +28,8 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getId())
-                    .withExpiresAt(generateExpirationDate())
+                    .withIssuedAt(Instant.now()) // Gerado em
+                    .withExpiresAt(Instant.now().plus(Duration.ofHours(4))) // Expirado em
                     .sign(algorithm);
         }
         catch (JWTCreationException exception) {
@@ -51,7 +53,5 @@ public class TokenService {
         }
     }
 
-    private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
-    }
+
 }

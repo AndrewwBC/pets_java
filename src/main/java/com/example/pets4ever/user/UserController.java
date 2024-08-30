@@ -1,10 +1,12 @@
 package com.example.pets4ever.user;
 
+import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
+import com.example.pets4ever.user.responses.PatchNameResponse;
 import com.example.pets4ever.user.responses.ProfileResponse;
 import com.example.pets4ever.user.responses.UpdateEmailResponse;
 import jakarta.validation.Valid;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 
 @RestController
@@ -38,13 +42,19 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateEmail(updateEmailDTO, id));
     }
 
+    @PatchMapping("/name/{id}")
+    public ResponseEntity<PatchNameResponse> updateName(@PathVariable String id, @RequestBody @Valid PatchNameDTO patchNameDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.patchName(id, patchNameDTO));
+
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK).body(userService.delete(id));
     }
 
     @PutMapping("/{id}/profile-picture")
-    public ResponseEntity<ChangeProfileImageResponse> updateProfilePicture(@PathVariable String id, @ModelAttribute ProfileImg profileImg){
+    public ResponseEntity<ChangeProfileImageResponse> updateProfilePicture(@PathVariable String id, @ModelAttribute ProfileImg profileImg) throws IOException {
         System.out.println(profileImg);
         return ResponseEntity.ok(userService.changeProfilePicture(profileImg, id));
     }
