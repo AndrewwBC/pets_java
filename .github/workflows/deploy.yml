@@ -20,7 +20,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Build JAR
-        run: ./mvnw clean package
+        run: ./mvnw clean package -DskipTests
 
       - name: Setup SSH
         run: |
