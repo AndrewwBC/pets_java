@@ -51,7 +51,9 @@ jobs:
             HOST: ${{ secrets.SSH_HOST }}
             USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
-            ssh -i ~/.ssh/id_rsa $USERNAME@$HOST
+          ssh -i ~/.ssh/id_rsa $USERNAME@$HOST << 'EOF'
             pkill -f 'java' || true
             cd workflow/
-            nohup java -jar pets4ever-0.0.1-SNAPSHOT.jar --spring.config.location=file:application.properties
+            nohup java -jar pets4ever-0.0.1-SNAPSHOT.jar --spring.config.location=file:application.properties > app.log 2>&1 &
+          EOF
+        
