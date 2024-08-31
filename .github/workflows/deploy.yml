@@ -29,4 +29,4 @@ jobs:
           HOST: ${{ secrets.SSH_HOST }}
           PORT: ${{ secrets.SSH_PORT }}
         run: |
-          scp -i ~/.ssh/id_rsa -P ${{ env.PORT }} target/*.jar ${{ env.USERNAME }}@${{ env.HOST }}:/caminho/na/vm/
+          scp -i ~/.ssh/id_rsa -P ${{ env.PORT }} target/*.jar ${{ env.USERNAME }}@${{ env.HOST }}:/home/ubuntu/workflow
