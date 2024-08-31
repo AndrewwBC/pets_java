@@ -3,34 +3,36 @@ name: Deploy to Oracle VM
 on:
   push:
     branches:
-      - feature_architecture  # ou o branch que você quiser monitorar
+      - feature_architecture
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
+          java-version: '17'
           distribution: 'adopt'
-          java-version: '17'  # Versão do JDK que você está usando
 
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
+      - name: Build JAR
+        run: ./mvnw clean package
 
-      - name: SCP to Oracle VM
-        env:
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          USERNAME: ${{ secrets.SSH_USERNAME }}
-          HOST: ${{ secrets.SSH_HOST }}
-          PORT: ${{ secrets.SSH_PORT }}
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          printf "%s" "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p $PORT $HOST >> ~/.ssh/known_hosts
-          scp -i ~/.ssh/id_rsa -P $PORT target/*.jar $USERNAME@$HOST:/home/$USERNAME/workflow
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Verify JAR file
+        run: |
+          ls -lh ./target/pets4ever-0.0.1-SNAPSHOT.jar
+
+      - name: SCP to Oracle VM
+        run: |
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} ./target/pets4ever-0.0.1-SNAPSHOT.jar ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/workflow/
