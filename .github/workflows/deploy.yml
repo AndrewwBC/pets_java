@@ -26,13 +26,22 @@ jobs:
         run: |
           ls -lh ./target/pets4ever-0.0.1-SNAPSHOT.jar
 
+      - name: Setup SSH
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PORT: ${{ secrets.SSH_PORT }}
+          HOST: ${{ secrets.SSH_HOST }}
+          USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p $PORT $HOST >> ~/.ssh/known_hosts
+
       - name: SCP to Oracle VM
         env:
-            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            PORT: ${{ secrets.SSH_PORT }}
-            HOST: ${{ secrets.SSH_HOST }}
-            USERNAME: ${{ secrets.SSH_USERNAME }}
+          PORT: ${{ secrets.SSH_PORT }}
+          HOST: ${{ secrets.SSH_HOST }}
+          USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
-            echo "$PRIVATE_KEY" | base64 --decode > /tmp/id_rsa
-            chmod 600 /tmp/id_rsa
-            scp -i /tmp/id_rsa -P $PORT ./target/pets4ever-0.0.1-SNAPSHOT.jar $USERNAME@$HOST:/home/$USERNAME/workflow/
+          scp -i ~/.ssh/id_rsa -P $PORT ./target/pets4ever-0.0.1-SNAPSHOT.jar $USERNAME@$HOST:/home/$USERNAME/workflow/
