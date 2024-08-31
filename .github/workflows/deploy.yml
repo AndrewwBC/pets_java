@@ -30,7 +30,7 @@ jobs:
           PORT: ${{ secrets.SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
-          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          printf "%s" "$PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p $PORT $HOST >> ~/.ssh/known_hosts
-          scp -i ~/.ssh/id_rsa -P ${{ env.PORT }} target/*.jar ${{ env.USERNAME }}@${{ env.HOST }}:/home/ubuntu/workflow
+          scp -i ~/.ssh/id_rsa -P $PORT target/*.jar $USERNAME@$HOST:/home/$USERNAME/workflow
