@@ -3,7 +3,7 @@ name: Deploy to Oracle VM
 on:
   push:
     branches:
-      - main  # ou o branch que você quiser monitorar
+      - feature_architecture  # ou o branch que você quiser monitorar
 
 jobs:
   build:
