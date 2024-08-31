@@ -26,7 +26,7 @@ public class UserController {
     UserService userService;
     @GetMapping
     public ResponseEntity<Object> index() {
-        return ResponseEntity.ok(userService);
+        return ResponseEntity.ok(userService.index());
     }
     @PostMapping
     public ResponseEntity<Object> signup(@RequestBody @Valid RegisterDTO data) throws Exception {

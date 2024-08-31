@@ -95,7 +95,7 @@ public class PostServices {
 
         List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
         post.getComments().forEach(comment -> {
-            commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getUser().getUserProfilePhotoUrl(), comment.getUser().getUsername(), comment.getComment()));
+            commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getUser().getProfileImgUrl(), comment.getUser().getUsername(), comment.getComment()));
         });
 
         List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();

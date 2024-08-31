@@ -9,7 +9,7 @@ public record ValidateDTO(
         String code,
 
         @NotNull
-        @Email
+        @Email(message = "Email inválido.")
         String email,
         @NotNull
         @UUID

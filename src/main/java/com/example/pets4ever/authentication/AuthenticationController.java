@@ -2,7 +2,7 @@ package com.example.pets4ever.authentication;
 
 import com.example.pets4ever.infra.security.TokenService;
 import com.example.pets4ever.user.dtos.signInDTO.SignInDTO;
-import com.example.pets4ever.user.dtos.signInDTO.SignInResponseDTO;
+import com.example.pets4ever.user.responses.SignInResponse;
 import com.example.pets4ever.user.dtos.signInDTO.SignInWithSessionDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserService;
@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
@@ -38,8 +36,8 @@ public class AuthenticationController {
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponseDTO> signin(@RequestBody @Valid SignInDTO data) {
-        this.signInValidate.allValidations(data);
+    public ResponseEntity<SignInResponse> signin(@RequestBody @Valid SignInDTO data) {
+        this.signInValidate.validate(data);
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
@@ -48,7 +46,7 @@ public class AuthenticationController {
 
         User user = this.userService.signin(userId);
 
-        return ResponseEntity.ok(new SignInResponseDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl(), token));
+        return ResponseEntity.ok(SignInResponse.fromUserAndToken(user, token));
     }
 
     @GetMapping("/session")
@@ -56,7 +54,7 @@ public class AuthenticationController {
         System.out.println(bearerToken);
         String userId = getUserIdFromToken.recoverUserId(bearerToken);
         User user = this.userService.signin(userId);
-        return ResponseEntity.ok(new SignInWithSessionDTO(userId, user.getUsername(), user.getEmail(), user.getUserProfilePhotoUrl()));
+        return ResponseEntity.ok(new SignInWithSessionDTO(userId, user.getUsername(), user.getEmail(), user.getProfileImgUrl()));
     }
 
 }

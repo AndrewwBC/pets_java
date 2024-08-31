@@ -1,4 +1,4 @@
-package com.example.pets4ever.infra.exceptions.TokenExpired;
+package com.example.pets4ever.infra.exceptions.tokenExpired;
 
 
 public class MyTokenExpiredException extends Exception {

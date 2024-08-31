@@ -22,8 +22,8 @@ public class UpdateValidations implements UpdateValidate {
 
         List<ErrorListDTO> errorListDTO = new ArrayList<>();
 
-        if(this.userRepository.findByName(updateDTO.name()) != null) {
-            errorListDTO.add(new ErrorListDTO("name", "Nome já cadastrado!"));
+        if(this.userRepository.findByUsername(updateDTO.name()) != null) {
+            errorListDTO.add(new ErrorListDTO("userName", "Nome de usário já cadastrado!"));
         }
 
         if(this.userRepository.findByEmail(updateDTO.email()) != null) {

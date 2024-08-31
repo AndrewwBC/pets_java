@@ -2,7 +2,7 @@ package com.example.pets4ever.infra.security;
 
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.pets4ever.infra.exceptions.TokenExpired.MyTokenExceptionHandler;
+import com.example.pets4ever.infra.exceptions.tokenExpired.MyTokenExceptionHandler;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -37,6 +36,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             if(token != null) {
                 try {
                     String subject = tokenService.validateTokenAndGetUserId(token);
+                    System.out.println(subject);
                     User user = userRepository.findById(subject).orElseThrow();
 
                     var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -47,10 +47,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                     return;
                 }
             }
-//            else {
-//                myTokenExceptionHandler.handleTokenException(response);
-//                return;
-//            }
+
             filterChain.doFilter(request, response);
 
     }

@@ -26,7 +26,7 @@ public record ProfileResponse (
         return new ProfileResponse(
                 user.getUsername(),
                 user.getEmail(),
-                user.getUserProfilePhotoUrl(),
+                user.getProfileImgUrl(),
                 followersData,
                 followingOfProfileDTOS,
                 userPostsAndQuantityOfPosts

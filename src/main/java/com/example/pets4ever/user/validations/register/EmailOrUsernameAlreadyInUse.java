@@ -3,14 +3,12 @@ package com.example.pets4ever.user.validations.register;
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
 import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
-import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class EmailOrUsernameAlreadyInUse implements RegisterValidate{
@@ -20,20 +18,20 @@ public class EmailOrUsernameAlreadyInUse implements RegisterValidate{
     @Override
     public void validate(RegisterDTO registerDTO) {
 
-        List<ErrorListDTO> error = new ArrayList<>();
+        boolean usernameAlreadyInUse = userRepository.existsByUsername(registerDTO.getUsername());
+        boolean emailAlreadyInUse = userRepository.existsByEmail(registerDTO.getEmail());
 
-        Optional<User> isUsernameRegistered = Optional.ofNullable(this.userRepository.findByName(registerDTO.getName()));
-        if(isUsernameRegistered.isPresent()) {
-            error.add(new ErrorListDTO("name", "Nome já cadastrado."));
+        List<ErrorListDTO> errorList = new ArrayList<>();
+
+        if(usernameAlreadyInUse){
+            errorList.add(new ErrorListDTO("username", "Nome de usuário já cadastrado."));
+        }
+        if(emailAlreadyInUse){
+            errorList.add(new ErrorListDTO("email", "Email já cadastrado."));
         }
 
-        Optional<User> isEmailRegistered = Optional.ofNullable(this.userRepository.findByEmail(registerDTO.getEmail()));
-        if(isEmailRegistered.isPresent()) {
-            error.add(new ErrorListDTO("email", "Email já cadastrado."));
-        }
-
-        if(!error.isEmpty()) {
-            throw new UserValidationsException(error);
+        if(!errorList.isEmpty()){
+            throw new UserValidationsException(errorList);
         }
     }
 }

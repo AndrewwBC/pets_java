@@ -2,6 +2,7 @@ package com.example.pets4ever.infra.exceptions.user;
 
 
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
+import com.example.pets4ever.infra.exceptions.user.validation.SigninException;
 import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,11 @@ public class HandleUserExceptions {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleResourceNotFoundException(NoSuchElementException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SigninException.class)
+    public ResponseEntity<String> handleResourceNotFoundException(SigninException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
 }

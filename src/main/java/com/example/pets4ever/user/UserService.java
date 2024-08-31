@@ -72,13 +72,13 @@ public class UserService {
         List<Post> userPosts = user.getPosts();
 
         List<UserIdNameAndImageProps> listOfUsersToFollowersData = followers.stream().map(followUser ->
-                new UserIdNameAndImageProps(followUser.getUsername(), followUser.getId(), followUser.getUserProfilePhotoUrl())
+                new UserIdNameAndImageProps(followUser.getUsername(), followUser.getId(), followUser.getProfileImgUrl())
         ).collect(Collectors.toList());
 
         FollowersData followersData = new FollowersData(listOfUsersToFollowersData, followers.size());
 
         List<UserIdNameAndImageProps> listOfUsersToFollowingData = following.stream().map(followingUser ->
-                new UserIdNameAndImageProps(followingUser.getUsername(), followingUser.getId(), followingUser.getUserProfilePhotoUrl())
+                new UserIdNameAndImageProps(followingUser.getUsername(), followingUser.getId(), followingUser.getProfileImgUrl())
         ).collect(Collectors.toList());
 
         FollowingsData followingsData = new FollowingsData(listOfUsersToFollowingData, listOfUsersToFollowingData.size());
@@ -113,7 +113,7 @@ public class UserService {
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.getPassword());
-        User newUser = new User(registerDTO.getName(), registerDTO.getEmail(), encryptedPassword, userRole);
+        User newUser = new User(registerDTO.getFullname(), registerDTO.getUsername(), registerDTO.getEmail(), encryptedPassword, userRole);
 
         userRepository.save(newUser);
         return "Usuário registrado com sucesso!";
@@ -126,7 +126,7 @@ public class UserService {
         User userToBeUpdated = userRepository.findById(userId).
                 orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
-        userToBeUpdated.setName(updateDTO.name());
+        userToBeUpdated.setUsername(updateDTO.name());
         userToBeUpdated.setEmail(updateDTO.email());
 
         userRepository.save(userToBeUpdated);
@@ -169,7 +169,7 @@ public class UserService {
 
 
         String uniqueFilename = this.amazonClient.uploadFile(profileImg.getFile());
-        user.setUserProfilePhotoUrl(uniqueFilename);
+        user.setProfileImgUrl(uniqueFilename);
 
         userRepository.save(user);
         return new ChangeProfileImageResponse(profileImg.getFile().getName(), user.getUsername());
@@ -187,7 +187,7 @@ public class UserService {
         System.out.println(userId);
         User user = this.findUserOrElseThrow(userId);
 
-        user.setName(patchNameDTO.name());
+        user.setUsername(patchNameDTO.name());
         userRepository.save(user);
 
         return new PatchNameResponse("Nome atualizado");

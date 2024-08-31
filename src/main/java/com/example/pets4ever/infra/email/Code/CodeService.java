@@ -7,6 +7,7 @@ import com.example.pets4ever.infra.email.Code.exceptions.InvalidCodeException;
 import com.example.pets4ever.infra.email.Code.response.CodeResponse;
 import com.example.pets4ever.infra.email.Code.response.ValidateResponse;
 import com.example.pets4ever.infra.email.EmailService;
+import com.example.pets4ever.infra.exceptions.email.EmailAlreadyInUseException;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import jakarta.validation.ValidationException;
@@ -34,6 +35,11 @@ public class CodeService {
             User user = userRepository.findById(validateDTO.userId()).orElseThrow(()
                     -> new NoSuchElementException("Usuário não encontrado"));
 
+            boolean emailAlreadyInUse =  userRepository.findByEmail(validateDTO.email()).isPresent();
+
+            if(emailAlreadyInUse) {
+                throw new EmailAlreadyInUseException("Email já cadastrado.");
+            }
             user.setEmail(validateDTO.email());
 
             userRepository.save(user);

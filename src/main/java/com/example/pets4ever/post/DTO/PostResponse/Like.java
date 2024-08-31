@@ -13,13 +13,13 @@ public class Like {
 
     private String userId;
     private String username;
-    private String userProfilePhotoUrl;
+    private String profileImgUrl;
 
     public static Like fromUser(User user) {
         return new Like(
                 user.getId(),
-                user.getName(),
-                user.getUserProfilePhotoUrl()
+                user.getUsername(),
+                user.getProfileImgUrl()
         );
     }
 }

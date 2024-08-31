@@ -1,6 +1,7 @@
 package com.example.pets4ever.user.validations.login;
 
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
+import com.example.pets4ever.infra.exceptions.user.validation.SigninException;
 import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
@@ -20,40 +22,18 @@ public class SignInValidations implements SignInValidate {
     UserRepository userRepository;
 
     @Override
-    public void checkEmailExists(SignInDTO signInDTO) {
+    public void validate(SignInDTO signInDTO) {
 
-        Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(signInDTO.email()));
+        User user = this.userRepository.findByEmail(signInDTO.email()).orElseThrow(()
+                -> new SigninException("Email ou senha incorretos."));
 
-        if(user.isEmpty()) {
-            List<ErrorListDTO> error = new ArrayList<>();
-            error.add(new ErrorListDTO("email", "Email não cadastrado!"));
+        String cryptedPassword = user.getPassword();
+        String loginPassword = signInDTO.password();
 
-            throw new UserValidationsException(error);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if(!encoder.matches(loginPassword, cryptedPassword)) {
+            throw new SigninException("Email ou senha incorretos.");
         }
-    }
-
-    @Override
-    public void checkPassword(SignInDTO signInDTO) {
-
-        Optional<User> user = Optional.ofNullable(this.userRepository.findByEmail(signInDTO.email()));
-
-        if(user.isPresent()) {
-            String cryptedPassword = user.get().getPassword();
-            String loginPassword = signInDTO.password();
-
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-            if(!encoder.matches(loginPassword, cryptedPassword)) {
-                List<ErrorListDTO> error = new ArrayList<>();
-                error.add(new ErrorListDTO("password", "Senha incorreta!"));
-                throw new UserValidationsException(error);
-            }
-        }
-    }
-
-    @Override
-    public void allValidations(SignInDTO signInDTO) {
-            this.checkEmailExists(signInDTO);
-            this.checkPassword(signInDTO);
     }
 }

@@ -3,26 +3,19 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.post.Post;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.collection.spi.PersistentList;
-import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 @Entity(name = "Users")
@@ -39,8 +32,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Length(min = 3, max = 64, message = "Nome de 3 a 64 caractéres!")
+    private String fullname;
+
     @Length(min = 3, max = 32, message = "Nome de usuário de 3 a 32 caractéres!")
-    private String name;
+    @Column(unique = true)
+    private String username;
 
     @Column(unique = true)
     @Email(message = "Email inválido!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
@@ -50,7 +47,7 @@ public class User implements UserDetails {
     @Length(min = 8,max = 64, message = "Senha com ao menos 8 caractéres!")
     private String password;
 
-    private String userProfilePhotoUrl;
+    private String profileImgUrl;
 
     private UserRole role;
 
@@ -69,18 +66,20 @@ public class User implements UserDetails {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<User> following;
 
-    public User(String name, String email, String password, UserRole role) {
-        this.name = name;
+    public User(String fullname, String username, String email, String password, UserRole role) {
+        this.username = username;
+        this.fullname = fullname;
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
-    public User(String id, String name, String email, String userProfilePhotoUrl, List<User> followers, List<User> following) {
+    public User(String id, String fullname, String username, String email, String profileImgUrl, List<User> followers, List<User> following) {
         this.id = id;
-        this.name = name;
+        this.username = username;
+        this.fullname = fullname;
         this.email = email;
-        this.userProfilePhotoUrl = userProfilePhotoUrl;
+        this.profileImgUrl = profileImgUrl;
         this.followers = followers;
         this.following = following;
     }
@@ -93,7 +92,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override
@@ -120,9 +119,10 @@ public class User implements UserDetails {
     public String toString() {
         return "User{" +
                 "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                ", fullname='" + fullname + '\'' +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", userProfilePhotoUrl='" + userProfilePhotoUrl + '\'' +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
                 ", followers=" + followers +
                 ", following=" + following +
                 ",posts," + posts +

@@ -13,14 +13,14 @@ public class UserIdNameAndImageProps {
 
     private String name;
     private String userId;
-    private String profileImageUrl;
+    private String profileImgUrl;
 
     @Override
     public String toString() {
-        return "UserIdNameAndImageProps{" +
+        return "UserIdNameAndImgProps{" +
                 "name='" + name + '\'' +
                 ", userId='" + userId + '\'' +
-                ", profileImageUrl='" + profileImageUrl + '\'' +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
                 '}';
     }
 }

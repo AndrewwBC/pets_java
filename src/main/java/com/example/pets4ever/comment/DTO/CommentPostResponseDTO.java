@@ -6,13 +6,13 @@ import lombok.*;
 
 public record CommentPostResponseDTO (
         String userId,
-        String userProfileImageUrl,
+        String profileImgUrl,
         String username,
         String comment
 ){
     public static CommentPostResponseDTO fromData(User user, String comment){
         return new CommentPostResponseDTO(
-            user.getId(), user.getUserProfilePhotoUrl(), user.getUsername(),comment
+            user.getId(), user.getProfileImgUrl(), user.getUsername(),comment
         );
     }
 }

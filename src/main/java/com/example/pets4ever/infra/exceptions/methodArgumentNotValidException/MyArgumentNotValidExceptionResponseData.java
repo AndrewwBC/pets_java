@@ -1,4 +1,4 @@
-package com.example.pets4ever.infra.exceptions.MethodArgumentNotValidException;
+package com.example.pets4ever.infra.exceptions.methodArgumentNotValidException;
 
 
 import lombok.AllArgsConstructor;

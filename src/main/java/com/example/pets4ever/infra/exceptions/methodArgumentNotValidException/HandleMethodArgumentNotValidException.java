@@ -1,4 +1,4 @@
-package com.example.pets4ever.infra.exceptions.MethodArgumentNotValidException;
+package com.example.pets4ever.infra.exceptions.methodArgumentNotValidException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @ControllerAdvice
-public class MyArgumentNotValidException {
+public class HandleMethodArgumentNotValidException {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
