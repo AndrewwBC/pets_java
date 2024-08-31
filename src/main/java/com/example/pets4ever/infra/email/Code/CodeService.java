@@ -29,6 +29,7 @@ public class CodeService {
         boolean isCodeValid = cacheService.isCodeValid(validateDTO.code());
         System.out.println(validateDTO.code());
         if(isCodeValid) {
+            cacheService.removeCode(validateDTO.code());
 
             User user = userRepository.findById(validateDTO.userId()).orElseThrow(()
                     -> new NoSuchElementException("Usuário não encontrado"));

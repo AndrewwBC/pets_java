@@ -35,6 +35,10 @@ public class CacheService {
         return isValid;
     }
 
+    public void removeCode(String code){
+        cache.remove(code);
+    }
+
     @Scheduled(fixedRate = 60000)
     public void removeExpiredCodes() {
         LocalDateTime now = LocalDateTime.now();
