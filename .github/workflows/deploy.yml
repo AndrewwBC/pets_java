@@ -22,16 +22,10 @@ jobs:
       - name: Build JAR
         run: ./mvnw clean package -DskipTests
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-
       - name: Verify JAR file
         run: |
           ls -lh ./target/pets4ever-0.0.1-SNAPSHOT.jar
 
       - name: SCP to Oracle VM
         run: |
-          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} ./target/pets4ever-0.0.1-SNAPSHOT.jar ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/workflow/
+          scp -i ${{secrets.SSH_PRIVATE_KEY}} ./target/pets4ever-0.0.1-SNAPSHOT.jar ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/workflow/
