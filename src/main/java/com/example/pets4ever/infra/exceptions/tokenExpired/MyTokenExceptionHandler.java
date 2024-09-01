@@ -14,7 +14,7 @@ public class MyTokenExceptionHandler {
     @ExceptionHandler(JWTVerificationException.class)
     public void handleTokenException(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("Token expirado ou invalido. Logue novamente!");
+        response.getWriter().write("Invalid token");
     }
 
 }

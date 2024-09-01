@@ -28,11 +28,7 @@ public class UserController {
     public ResponseEntity<Object> index() {
         return ResponseEntity.ok(userService.index());
     }
-
-    @GetMapping("/testApi")
-    public ResponseEntity<String> teste() {
-        return ResponseEntity.ok("No ar");
-    }
+    
     @PostMapping
     public ResponseEntity<Object> signup(@RequestBody @Valid RegisterDTO data) throws Exception {
         return ResponseEntity.ok(userService.create(data));

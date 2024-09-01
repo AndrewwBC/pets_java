@@ -67,6 +67,8 @@ public class UserService {
 
         User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
+        System.out.println(user);
+
         List<User> followers = user.getFollowers();
         List<User> following = user.getFollowing();
         List<Post> userPosts = user.getPosts();

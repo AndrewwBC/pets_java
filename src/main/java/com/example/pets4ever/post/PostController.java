@@ -38,7 +38,7 @@ public class PostController {
 //        return ResponseEntity.ok().body(this.postServices.getPost(postId,postShowDTO.userId()));
 //    }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<CreateResponse> create(@ModelAttribute @Valid PostDTO postDTO) {
         System.out.println(postDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(postServices.create(postDTO));
