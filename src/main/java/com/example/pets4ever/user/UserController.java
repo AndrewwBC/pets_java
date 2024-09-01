@@ -28,6 +28,11 @@ public class UserController {
     public ResponseEntity<Object> index() {
         return ResponseEntity.ok(userService.index());
     }
+
+    @GetMapping("/testApi")
+    public ResponseEntity<String> teste() {
+        return ResponseEntity.ok("No ar");
+    }
     @PostMapping
     public ResponseEntity<Object> signup(@RequestBody @Valid RegisterDTO data) throws Exception {
         return ResponseEntity.ok(userService.create(data));
@@ -61,6 +66,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProfileResponse> profile(@PathVariable String id) {
+        System.out.println(id);
         ProfileResponse user = userService.profile(id);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }

@@ -1,5 +1,6 @@
 package com.example.pets4ever.post;
 
+import com.example.pets4ever.post.DTO.FeedDTO;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.DTO.PostShowDTO;
@@ -25,17 +26,17 @@ public class PostController {
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
 
-    @GetMapping("/")
-    public ResponseEntity<List<PostResponseDTO>> index(){
-        return ResponseEntity.ok().body(this.postServices.getAllPosts());
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<PostResponseDTO>> index(@PathVariable String userId){
+        return ResponseEntity.ok().body(this.postServices.getAllPosts(userId));
     }
 
     //busca o post de acordo com o usuario para tratar likes etc
     //fazer no futuro um apenas para post, sem depender de user
-    @GetMapping("/{postId}")
-    public ResponseEntity<PostResponseDTO> show(@PathVariable String postId, @RequestBody PostShowDTO postShowDTO){
-        return ResponseEntity.ok().body(this.postServices.getPost(postId,postShowDTO.userId()));
-    }
+//    @GetMapping("/{postId}")
+//    public ResponseEntity<PostResponseDTO> show(@PathVariable String postId, @RequestBody PostShowDTO postShowDTO){
+//        return ResponseEntity.ok().body(this.postServices.getPost(postId,postShowDTO.userId()));
+//    }
 
     @PostMapping("/")
     public ResponseEntity<CreateResponse> create(@ModelAttribute @Valid PostDTO postDTO) {

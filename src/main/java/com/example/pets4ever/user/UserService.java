@@ -139,6 +139,11 @@ public class UserService {
         User user = this.userRepository.findById(userId).orElseThrow(()
                 -> new NoSuchElementException("Usuário não encontrado"));
 
+        boolean emailAlreadyInUse = this.userRepository.existsByEmail(updateEmailDTO.email());
+        if(emailAlreadyInUse) {
+            return new UpdateEmailResponse("Email atualizado!");
+        }
+
         try {
             user.setEmail(updateEmailDTO.email());
 

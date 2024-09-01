@@ -20,7 +20,7 @@ public class PostResponseDTO {
     private String imageUrl;
     private String creationDate;
     private String name;
-    private String userProfileImageUrl;
+    private String profileImgUrl;
     private String userId;
     private boolean userLikedThisPost;
     private Long quantityOfLikes;
@@ -51,7 +51,7 @@ public class PostResponseDTO {
                 ", imageUrl='" + imageUrl + '\'' +
                 ", creationDate='" + creationDate + '\'' +
                 ", name='" + name + '\'' +
-                ", userProfileImageUrl='" + userProfileImageUrl + '\'' +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
                 ", userId='" + userId + '\'' +
                 ", comments=" + comments +
                 '}';

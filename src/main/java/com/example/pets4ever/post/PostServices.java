@@ -57,10 +57,10 @@ public class PostServices {
         }
 
     }
-    public List<PostResponseDTO> getAllPosts() {
+    public List<PostResponseDTO> getAllPosts(String userId) {
         List<Post> allPosts =  this.postRepository.findAll();
 
-        return allPosts.stream().map(post -> getPostResponseDTO(post.getUser().getId(), post)).toList();
+        return allPosts.stream().map(post -> getPostResponseDTO(userId, post)).toList();
     }
     public PostResponseDTO getPost(String postId, String userId) {
 

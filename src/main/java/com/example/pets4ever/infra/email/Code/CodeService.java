@@ -35,11 +35,6 @@ public class CodeService {
             User user = userRepository.findById(validateDTO.userId()).orElseThrow(()
                     -> new NoSuchElementException("Usuário não encontrado"));
 
-            boolean emailAlreadyInUse =  userRepository.findByEmail(validateDTO.email()).isPresent();
-
-            if(emailAlreadyInUse) {
-                throw new EmailAlreadyInUseException("Email já cadastrado.");
-            }
             user.setEmail(validateDTO.email());
 
             userRepository.save(user);

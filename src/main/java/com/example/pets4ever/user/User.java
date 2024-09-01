@@ -33,9 +33,11 @@ public class User implements UserDetails {
     private String id;
 
     @Length(min = 3, max = 64, message = "Nome de 3 a 64 caractéres!")
+    @NotEmpty(message = "Nome completo deve ser preenchido")
     private String fullname;
 
     @Length(min = 3, max = 32, message = "Nome de usuário de 3 a 32 caractéres!")
+    @NotEmpty(message = "Nome de usuário deve ser preenchido")
     @Column(unique = true)
     private String username;
 

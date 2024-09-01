@@ -39,9 +39,12 @@ public class AuthenticationController {
     public ResponseEntity<SignInResponse> signin(@RequestBody @Valid SignInDTO data) {
         this.signInValidate.validate(data);
 
+        System.out.println(data);
+
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
+        System.out.println(token);
         var userId = tokenService.validateTokenAndGetUserId(token);
 
         User user = this.userService.signin(userId);
