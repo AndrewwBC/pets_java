@@ -3,6 +3,7 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -33,7 +34,8 @@ public class Post {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private String creationDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now());
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REFRESH)
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)

@@ -9,6 +9,7 @@ import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
+import com.example.pets4ever.user.dtos.patchFollowing.PatchFollowingDTO;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
 import com.example.pets4ever.user.dtos.profileDTO.UserIdNameAndImageProps;
 import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
@@ -16,10 +17,7 @@ import com.example.pets4ever.user.dtos.profileDTO.UserPostsAndQuantityOfPosts;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
-import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
-import com.example.pets4ever.user.responses.PatchNameResponse;
-import com.example.pets4ever.user.responses.ProfileResponse;
-import com.example.pets4ever.user.responses.UpdateEmailResponse;
+import com.example.pets4ever.user.responses.*;
 import com.example.pets4ever.user.validations.register.RegisterValidate;
 import com.example.pets4ever.user.validations.update.UpdateValidate;
 import com.example.pets4ever.user.validations.update.updateProfileImage.UpdateProfileImageValidate;
@@ -28,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
@@ -60,17 +59,14 @@ public class UserService {
         this.amazonClient = amazonClient;
     }
 
-    public List<User> index() {
-        return this.userRepository.findAll();
-    }
     public ProfileResponse profile(String userId) {
 
         User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
         System.out.println(user);
 
-        List<User> followers = user.getFollowers();
-        List<User> following = user.getFollowing();
+        List<User> followers = user.getFollowedByUsers();
+        List<User> following = user.getFollowingUsers();
         List<Post> userPosts = user.getPosts();
 
         List<UserIdNameAndImageProps> listOfUsersToFollowersData = followers.stream().map(followUser ->
@@ -167,7 +163,7 @@ public class UserService {
         return null;
     }
 
-    public ChangeProfileImageResponse changeProfilePicture(ProfileImg profileImg, String userId) throws IOException {
+    public ChangeProfileImageResponse patchProfileImg(ProfileImg profileImg, String userId) throws IOException {
 
         System.out.println(profileImg);
         this.updateProfileImageValidate.validate(profileImg.getFile());
@@ -200,9 +196,34 @@ public class UserService {
         return new PatchNameResponse("Nome atualizado");
     }
 
+
+    @Transactional
+    public PatchFollowingResponse patchFollowing(PatchFollowingDTO patchFollowingDTO) {
+        User actionUser = this.findUserOrElseThrow(patchFollowingDTO.actionUserId());
+        User userToBeFollowedOrUnfollowed = this.findUserOrElseThrow(patchFollowingDTO.idOfUserToBeFollowed());
+
+        // retirar usuário seguido
+        if(actionUser.getFollowingUsers().contains(userToBeFollowedOrUnfollowed)) {
+            actionUser.getFollowingUsers().remove(userToBeFollowedOrUnfollowed);
+            userToBeFollowedOrUnfollowed.getFollowedByUsers().remove(actionUser);
+
+            userRepository.save(actionUser);
+            userRepository.save(userToBeFollowedOrUnfollowed);
+        } else {
+            actionUser.getFollowingUsers().add(userToBeFollowedOrUnfollowed);
+            userToBeFollowedOrUnfollowed.getFollowedByUsers().add(actionUser);
+
+            userRepository.save(actionUser);
+            userRepository.save(userToBeFollowedOrUnfollowed);
+        }
+
+        return new PatchFollowingResponse(actionUser.getUsername(), userToBeFollowedOrUnfollowed.getUsername());
+    }
+
     private User findUserOrElseThrow(String userId) {
-        return userRepository.findById(userId).orElseThrow(()
-                -> new NoSuchElementException("Usuário não encontrado."));
+
+         return userRepository.findById(userId).orElseThrow(()
+                    -> new NoSuchElementException("Usuário não encontrado."));
     }
 }
 

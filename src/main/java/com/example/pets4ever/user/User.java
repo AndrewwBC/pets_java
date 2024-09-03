@@ -6,7 +6,6 @@ import com.example.pets4ever.post.Post;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
@@ -62,11 +61,16 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<User> followers;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_following",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id")
+    )
+    private List<User> followingUsers;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<User> following;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "followingUsers")
+    private List<User> followedByUsers;
 
     public User(String fullname, String username, String email, String password, UserRole role) {
         this.username = username;
@@ -82,8 +86,8 @@ public class User implements UserDetails {
         this.fullname = fullname;
         this.email = email;
         this.profileImgUrl = profileImgUrl;
-        this.followers = followers;
-        this.following = following;
+        this.followedByUsers = followers;
+        this.followingUsers = following;
     }
 
     @Override
@@ -125,8 +129,6 @@ public class User implements UserDetails {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", profileImgUrl='" + profileImgUrl + '\'' +
-                ", followers=" + followers +
-                ", following=" + following +
                 ",posts," + posts +
                 '}';
     }

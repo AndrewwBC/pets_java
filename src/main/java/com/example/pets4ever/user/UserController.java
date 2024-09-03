@@ -2,13 +2,11 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
+import com.example.pets4ever.user.dtos.patchFollowing.PatchFollowingDTO;
 import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
-import com.example.pets4ever.user.responses.ChangeProfileImageResponse;
-import com.example.pets4ever.user.responses.PatchNameResponse;
-import com.example.pets4ever.user.responses.ProfileResponse;
-import com.example.pets4ever.user.responses.UpdateEmailResponse;
+import com.example.pets4ever.user.responses.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,10 +22,7 @@ public class UserController {
 
     @Autowired
     UserService userService;
-    @GetMapping
-    public ResponseEntity<Object> index() {
-        return ResponseEntity.ok(userService.index());
-    }
+
     
     @PostMapping
     public ResponseEntity<Object> signup(@RequestBody @Valid RegisterDTO data) throws Exception {
@@ -54,10 +49,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.delete(id));
     }
 
-    @PutMapping("/{id}/profile-picture")
-    public ResponseEntity<ChangeProfileImageResponse> updateProfilePicture(@PathVariable String id, @ModelAttribute ProfileImg profileImg) throws IOException {
+    @PatchMapping("/{id}/profile-img")
+    public ResponseEntity<ChangeProfileImageResponse> patchProfileImg(@PathVariable String id, @ModelAttribute ProfileImg profileImg) throws IOException {
         System.out.println(profileImg);
-        return ResponseEntity.ok(userService.changeProfilePicture(profileImg, id));
+        return ResponseEntity.ok(userService.patchProfileImg(profileImg, id));
     }
 
     @GetMapping("/{id}")
@@ -65,6 +60,11 @@ public class UserController {
         System.out.println(id);
         ProfileResponse user = userService.profile(id);
         return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @PatchMapping("/following")
+    public ResponseEntity<PatchFollowingResponse> patchFollowing(@RequestBody @Valid PatchFollowingDTO patchFollowingDTO){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.patchFollowing(patchFollowingDTO));
     }
 }
 
