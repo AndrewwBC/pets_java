@@ -1,5 +1,7 @@
 package com.example.pets4ever.post.response;
 
-public record CreateResponse(String createAt, String fileName) {
+import java.time.LocalDateTime;
+
+public record CreateResponse(LocalDateTime createAt, String fileName) {
 
 }

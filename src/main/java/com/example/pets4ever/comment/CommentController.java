@@ -18,8 +18,6 @@ import java.util.List;
 public class CommentController {
 
     @Autowired
-    GetUserIdFromToken getUserIdFromToken;
-    @Autowired
     CommentRepository commentRepository;
     @Autowired
     PostRepository postRepository;

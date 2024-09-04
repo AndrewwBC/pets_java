@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ public class PostResponseDTO {
     private String postId;
     private String description;
     private String imageUrl;
-    private String creationDate;
+    private LocalDateTime creationDate;
     private String name;
     private String profileImgUrl;
     private String userId;

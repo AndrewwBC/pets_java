@@ -1,16 +1,16 @@
 package com.example.pets4ever.post;
 
-
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 @Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="isStorie", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name="is_storie", discriminatorType = DiscriminatorType.STRING)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,11 +31,12 @@ public class Post {
     @NotNull(message = "A postagem deve ter a URL da imagem!")
     private String imageUrl;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private String creationDate = DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDate.now());
+    @CreationTimestamp
+    private LocalDateTime creationDate;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -45,7 +46,7 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch=FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String description, String imageUrl, User user){

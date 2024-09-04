@@ -52,13 +52,13 @@ public class User implements UserDetails {
 
     private UserRole role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
     @ManyToMany(mappedBy = "likes", cascade = CascadeType.REMOVE)
     private List<Post> userLikes;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)

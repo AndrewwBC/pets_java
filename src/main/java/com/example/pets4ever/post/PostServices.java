@@ -38,27 +38,27 @@ public class PostServices {
         this.amazonClient = amazonClient;
     }
 
-    public CreateResponse create(PostDTO postDTO) {
+    public CreateResponse create(PostDTO postDTO) throws IOException {
 
         this.postValidations.allValidations(postDTO);
         User user = this.userRepository.findById(postDTO.userId()).orElseThrow(() ->
                 new NoSuchElementException("Usuário não encontrado!"));
 
-        try {
+
             String uniqueFilename = this.amazonClient.uploadFile(postDTO.file());
             Post postToBeInserted = new Post(postDTO.description(), uniqueFilename, user);
 
             Post createdPost = this.postRepository.save(postToBeInserted);
+        System.out.println(createdPost);
             return new CreateResponse(createdPost.getCreationDate(), createdPost.getImageUrl());
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        } catch (PersistenceException e) {
-            throw new PersistenceException("Erro ao criar a postagem.");
-        }
+
 
     }
     public List<PostResponseDTO> getAllPosts(String userId) {
-        List<Post> allPosts =  this.postRepository.findAll();
+        List<Post> allPosts =  this.postRepository.findAllByOrderByCreationDateDesc();
+
+        userRepository.findById(userId).orElseThrow(() ->
+            new NoSuchElementException("Usuário não encontrado."));
 
         return allPosts.stream().map(post -> getPostResponseDTO(userId, post)).toList();
     }

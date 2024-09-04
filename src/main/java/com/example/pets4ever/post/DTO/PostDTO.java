@@ -18,13 +18,13 @@ public record PostDTO(
         String userId,
         @NotNull(message = "A postagem deve incluir uma imagem!")
         MultipartFile file,
-        String isStorie
+        String is_storie
 )
 {
-    public PostDTO(String description,String userId,MultipartFile file, String isStorie) {
+    public PostDTO(String description,String userId,MultipartFile file, String is_storie) {
         this.description = description;
         this.userId = userId;
         this.file = file;
-        this.isStorie = isStorie;
+        this.is_storie = is_storie;
     }
 }

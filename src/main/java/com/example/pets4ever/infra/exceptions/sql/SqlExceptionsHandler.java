@@ -15,6 +15,7 @@ public class SqlExceptionsHandler {
 
     @ExceptionHandler(PersistenceException.class)
     public ResponseEntity<String> handlePersistenceException(PersistenceException persistenceException) {
+        System.out.println(persistenceException.getCause());
         return ResponseEntity.badRequest().body(persistenceException.getMessage());
     }
 }
