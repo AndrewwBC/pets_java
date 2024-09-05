@@ -1,6 +1,7 @@
 package com.example.pets4ever.user;
 
 
+import com.example.pets4ever.infra.exceptions.user.PatchFollowingException;
 import com.example.pets4ever.infra.security.TokenService;
 import com.example.pets4ever.infra.aws.AmazonClient;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
@@ -9,12 +10,13 @@ import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
+import com.example.pets4ever.user.dtos.patchFollowers.DeleteFollowerDTO;
 import com.example.pets4ever.user.dtos.patchFollowing.PatchFollowingDTO;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
 import com.example.pets4ever.user.dtos.profileDTO.UserIdNameAndImageProps;
 import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
 import com.example.pets4ever.user.dtos.profileDTO.UserPostsAndQuantityOfPosts;
-import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
+import com.example.pets4ever.user.dtos.signUpDTO.signUpDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.*;
@@ -99,19 +101,19 @@ public class UserService {
         return ProfileResponse.fromData(user, followersData, followingsData, userPostsAndQuantityOfPosts);
     }
 
-    public String create(RegisterDTO registerDTO) throws Exception {
+    public String create(signUpDTO signupDTO) throws Exception {
 
-        this.registerValidate.forEach(v -> v.validate(registerDTO));
+        this.registerValidate.forEach(v -> v.validate(signupDTO));
 
         UserRole userRole;
-        if (Objects.equals(registerDTO.getEmail(), admMail)) {
+        if (Objects.equals(signupDTO.getEmail(), admMail)) {
             userRole = UserRole.ADMIN;
         } else {
             userRole = UserRole.USER;
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.getPassword());
-        User newUser = new User(registerDTO.getFullname(), registerDTO.getUsername(), registerDTO.getEmail(), encryptedPassword, userRole);
+        String encryptedPassword = new BCryptPasswordEncoder().encode(signupDTO.getPassword());
+        User newUser = new User(signupDTO.getFullname(), signupDTO.getUsername(), signupDTO.getEmail(), encryptedPassword, userRole);
 
         userRepository.save(newUser);
         return "Usuário registrado com sucesso!";
@@ -202,22 +204,45 @@ public class UserService {
         User actionUser = this.findUserOrElseThrow(patchFollowingDTO.actionUserId());
         User userToBeFollowedOrUnfollowed = this.findUserOrElseThrow(patchFollowingDTO.idOfUserToBeFollowed());
 
+        if(actionUser == userToBeFollowedOrUnfollowed) {
+            throw new PatchFollowingException("Usuário não pode seguir a si mesmo.");
+        }
+
         // retirar usuário seguido
         if(actionUser.getFollowingUsers().contains(userToBeFollowedOrUnfollowed)) {
             actionUser.getFollowingUsers().remove(userToBeFollowedOrUnfollowed);
             userToBeFollowedOrUnfollowed.getFollowedByUsers().remove(actionUser);
 
-            userRepository.save(actionUser);
-            userRepository.save(userToBeFollowedOrUnfollowed);
         } else {
             actionUser.getFollowingUsers().add(userToBeFollowedOrUnfollowed);
             userToBeFollowedOrUnfollowed.getFollowedByUsers().add(actionUser);
 
-            userRepository.save(actionUser);
-            userRepository.save(userToBeFollowedOrUnfollowed);
         }
 
+        userRepository.save(actionUser);
+        userRepository.save(userToBeFollowedOrUnfollowed);
+
         return new PatchFollowingResponse(actionUser.getUsername(), userToBeFollowedOrUnfollowed.getUsername());
+    }
+
+    @Transactional
+    public DeleteFollowerResponse deleteFollower(DeleteFollowerDTO deleteFollowerDTO) {
+
+        User user = findUserOrElseThrow(deleteFollowerDTO.actionUserId());
+        User followerToBeRemoved = findUserOrElseThrow(deleteFollowerDTO.idOfUserToBeRemovedOfFollowersList());
+
+        if(user.getFollowedByUsers().contains(followerToBeRemoved)) {
+            user.getFollowedByUsers().remove(followerToBeRemoved);
+            followerToBeRemoved.getFollowingUsers().remove(user);
+
+            userRepository.save(user);
+            userRepository.save(followerToBeRemoved);
+
+            return new DeleteFollowerResponse(user.getUsername(), followerToBeRemoved.getUsername());
+        } else {
+            throw new NoSuchElementException("Seguidor não encontrado");
+        }
+
     }
 
     private User findUserOrElseThrow(String userId) {

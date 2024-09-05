@@ -2,6 +2,7 @@ package com.example.pets4ever.infra.exceptions.user;
 
 
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
+import com.example.pets4ever.infra.exceptions.user.dto.ErrorMessage;
 import com.example.pets4ever.infra.exceptions.user.validation.SigninException;
 import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
 import jakarta.validation.ConstraintViolationException;
@@ -35,13 +36,23 @@ public class HandleUserExceptions {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(NoSuchElementException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorMessage> handleResourceNotFoundException(NoSuchElementException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(this.getErrorMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(SigninException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(SigninException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    public ResponseEntity<ErrorMessage> handleSigninException(SigninException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(this.getErrorMessage(exception.getMessage()));
+    }
+
+    @ExceptionHandler(PatchFollowingException.class)
+    public ResponseEntity<ErrorMessage> handlePatchFollowingException(PatchFollowingException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.getErrorMessage(exception.getMessage()));
+
+    }
+
+    private ErrorMessage getErrorMessage(String message) {
+        return new ErrorMessage(message);
     }
 
 }

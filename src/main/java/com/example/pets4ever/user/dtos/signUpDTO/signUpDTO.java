@@ -1,11 +1,11 @@
-package com.example.pets4ever.user.dtos.signupDTO;
+package com.example.pets4ever.user.dtos.signUpDTO;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
-public class RegisterDTO {
+public class signUpDTO {
 
         @Length(min = 1, max = 64, message = "Nome deve ter de 1 a 64 caractéres")
         @NotNull(message = "Preencha o nome.")

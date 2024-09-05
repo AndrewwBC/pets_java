@@ -2,8 +2,9 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
+import com.example.pets4ever.user.dtos.patchFollowers.DeleteFollowerDTO;
 import com.example.pets4ever.user.dtos.patchFollowing.PatchFollowingDTO;
-import com.example.pets4ever.user.dtos.signupDTO.RegisterDTO;
+import com.example.pets4ever.user.dtos.signUpDTO.signUpDTO;
 import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.*;
@@ -25,7 +26,7 @@ public class UserController {
 
     
     @PostMapping
-    public ResponseEntity<Object> signup(@RequestBody @Valid RegisterDTO data) throws Exception {
+    public ResponseEntity<Object> signup(@RequestBody @Valid signUpDTO data) throws Exception {
         return ResponseEntity.ok(userService.create(data));
     }
     @PutMapping("/{id}")
@@ -65,6 +66,11 @@ public class UserController {
     @PatchMapping("/following")
     public ResponseEntity<PatchFollowingResponse> patchFollowing(@RequestBody @Valid PatchFollowingDTO patchFollowingDTO){
         return ResponseEntity.status(HttpStatus.OK).body(userService.patchFollowing(patchFollowingDTO));
+    }
+
+    @DeleteMapping("/follower")
+    public ResponseEntity<DeleteFollowerResponse> removeFollowers(@RequestBody @Valid DeleteFollowerDTO deleteFollowerDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.deleteFollower(deleteFollowerDTO));
     }
 }
 
