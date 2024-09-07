@@ -11,20 +11,19 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 
 
-public record ProfileResponse (
-        @NotBlank
+public record UserResponse (
         String username,
-        @NotBlank
-        @Email(message = "Email inválido!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+        String userId,
         String email,
         String userImageProfileUrl,
         FollowersData followers,
         FollowingsData following,
         UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts
 ){
-    public static ProfileResponse fromData(User user, FollowersData followersData, FollowingsData followingOfProfileDTOS, UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts) {
-        return new ProfileResponse(
+    public static UserResponse fromData(User user, FollowersData followersData, FollowingsData followingOfProfileDTOS, UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts) {
+        return new UserResponse(
                 user.getUsername(),
+                user.getId(),
                 user.getEmail(),
                 user.getProfileImgUrl(),
                 followersData,

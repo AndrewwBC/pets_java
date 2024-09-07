@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service
 public class TokenService {
@@ -29,7 +27,7 @@ public class TokenService {
                     .withIssuer("auth-api")
                     .withSubject(user.getId())
                     .withIssuedAt(Instant.now()) // Gerado em
-                    .withExpiresAt(Instant.now().plus(Duration.ofHours(4))) // Expirado em
+                    .withExpiresAt(Instant.now().plus(Duration.ofHours(24))) // Expirado em
                     .sign(algorithm);
         }
         catch (JWTCreationException exception) {

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {
-    User findByUsername(String userName);
+    Optional<User> findByUsername(String userName);
     Optional<User> findByEmail(String email);
     @Query(value = "SELECT u FROM Users u WHERE u.email = :email")
     UserDetails findByEmailToReturnUserDetails(String email);

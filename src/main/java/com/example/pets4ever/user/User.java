@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -56,9 +58,11 @@ public class User implements UserDetails {
     private List<Post> posts;
 
     @ManyToMany(mappedBy = "likes", cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Post> userLikes;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -67,9 +71,11 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "following_id")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<User> followingUsers;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "followingUsers")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<User> followedByUsers;
 
     public User(String fullname, String username, String email, String password, UserRole role) {

@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UpdateEmailResponse {
+public class UpdateEmailResponse{
     private String message;
 }

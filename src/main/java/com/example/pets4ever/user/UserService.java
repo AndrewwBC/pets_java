@@ -8,7 +8,7 @@ import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
-import com.example.pets4ever.user.dtos.PatchNameDTO.PatchNameDTO;
+import com.example.pets4ever.user.dtos.PatchNameDTO.PatchUsernameDTO;
 import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
 import com.example.pets4ever.user.dtos.patchFollowers.DeleteFollowerDTO;
 import com.example.pets4ever.user.dtos.patchFollowing.PatchFollowingDTO;
@@ -61,7 +61,7 @@ public class UserService {
         this.amazonClient = amazonClient;
     }
 
-    public ProfileResponse profile(String userId) {
+    public UserResponse user(String userId) {
 
         User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
@@ -98,7 +98,7 @@ public class UserService {
 
         UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts = new UserPostsAndQuantityOfPosts(postResponseDTOList, postResponseDTOList.size());
 
-        return ProfileResponse.fromData(user, followersData, followingsData, userPostsAndQuantityOfPosts);
+        return UserResponse.fromData(user, followersData, followingsData, userPostsAndQuantityOfPosts);
     }
 
     public String create(signUpDTO signupDTO) throws Exception {
@@ -165,7 +165,7 @@ public class UserService {
         return null;
     }
 
-    public ChangeProfileImageResponse patchProfileImg(ProfileImg profileImg, String userId) throws IOException {
+    public Response patchProfileImg(ProfileImg profileImg, String userId) throws IOException {
 
         System.out.println(profileImg);
         this.updateProfileImageValidate.validate(profileImg.getFile());
@@ -177,7 +177,7 @@ public class UserService {
         user.setProfileImgUrl(uniqueFilename);
 
         userRepository.save(user);
-        return new ChangeProfileImageResponse(profileImg.getFile().getName(), user.getUsername());
+        return Response.fromString("Imagem atualizada");
 
     }
 
@@ -186,21 +186,19 @@ public class UserService {
                 new NoSuchElementException("Usuário não encontrado."));
     }
 
-    public PatchNameResponse patchName(String userId, PatchNameDTO patchNameDTO) {
+    public Response patchName(String userId, PatchUsernameDTO patchUsernameDTO) {
 
-        System.out.println(patchNameDTO);
-        System.out.println(userId);
         User user = this.findUserOrElseThrow(userId);
 
-        user.setUsername(patchNameDTO.name());
+        user.setUsername(patchUsernameDTO.username());
         userRepository.save(user);
 
-        return new PatchNameResponse("Nome atualizado");
+        return Response.fromString("Nome atualizado.");
     }
 
 
     @Transactional
-    public PatchFollowingResponse patchFollowing(PatchFollowingDTO patchFollowingDTO) {
+    public  Response patchFollowing(PatchFollowingDTO patchFollowingDTO) {
         User actionUser = this.findUserOrElseThrow(patchFollowingDTO.actionUserId());
         User userToBeFollowedOrUnfollowed = this.findUserOrElseThrow(patchFollowingDTO.idOfUserToBeFollowed());
 
@@ -208,28 +206,34 @@ public class UserService {
             throw new PatchFollowingException("Usuário não pode seguir a si mesmo.");
         }
 
-        // retirar usuário seguido
+        String response;
+
         if(actionUser.getFollowingUsers().contains(userToBeFollowedOrUnfollowed)) {
             actionUser.getFollowingUsers().remove(userToBeFollowedOrUnfollowed);
             userToBeFollowedOrUnfollowed.getFollowedByUsers().remove(actionUser);
 
+
+            response = "Você deixou de seguir o usuário " + userToBeFollowedOrUnfollowed.getUsername()+".";
         } else {
             actionUser.getFollowingUsers().add(userToBeFollowedOrUnfollowed);
             userToBeFollowedOrUnfollowed.getFollowedByUsers().add(actionUser);
 
+            response = "Você está seguindo o usuário " + userToBeFollowedOrUnfollowed.getUsername()+".";
         }
 
         userRepository.save(actionUser);
         userRepository.save(userToBeFollowedOrUnfollowed);
 
-        return new PatchFollowingResponse(actionUser.getUsername(), userToBeFollowedOrUnfollowed.getUsername());
+        return Response.fromString(response);
     }
 
     @Transactional
-    public DeleteFollowerResponse deleteFollower(DeleteFollowerDTO deleteFollowerDTO) {
+    public Response deleteFollower(DeleteFollowerDTO deleteFollowerDTO) {
+
+        System.out.println(deleteFollowerDTO);
 
         User user = findUserOrElseThrow(deleteFollowerDTO.actionUserId());
-        User followerToBeRemoved = findUserOrElseThrow(deleteFollowerDTO.idOfUserToBeRemovedOfFollowersList());
+        User followerToBeRemoved = findUserOrElseThrow(deleteFollowerDTO.idOfFollowerToBeRemoved());
 
         if(user.getFollowedByUsers().contains(followerToBeRemoved)) {
             user.getFollowedByUsers().remove(followerToBeRemoved);
@@ -238,7 +242,7 @@ public class UserService {
             userRepository.save(user);
             userRepository.save(followerToBeRemoved);
 
-            return new DeleteFollowerResponse(user.getUsername(), followerToBeRemoved.getUsername());
+            return Response.fromString("O seguidor " + followerToBeRemoved.getUsername() + " foi removido");
         } else {
             throw new NoSuchElementException("Seguidor não encontrado");
         }

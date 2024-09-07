@@ -27,9 +27,9 @@ public class PostController {
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<PostResponseDTO>> index(@PathVariable String userId){
-        return ResponseEntity.ok().body(this.postServices.getAllPosts(userId));
+    @GetMapping("/{username}")
+    public ResponseEntity<List<PostResponseDTO>> index(@PathVariable String username){
+        return ResponseEntity.ok().body(this.postServices.getAllPosts(username));
     }
 
     //busca o post de acordo com o usuario para tratar likes etc

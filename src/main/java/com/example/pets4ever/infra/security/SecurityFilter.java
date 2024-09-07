@@ -7,6 +7,7 @@ import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,13 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-            var token = this.recoverToken(request);
+        String jwt = recoverToken(request);
 
-            if(token != null) {
+        System.out.println("Toookeen: " + jwt);
+
+            if(jwt != null) {
                 try {
-                    String subject = tokenService.validateTokenAndGetUserId(token);
+                    String subject = tokenService.validateTokenAndGetUserId(jwt);
                     System.out.println(subject);
                     User user = userRepository.findById(subject).orElseThrow();
 
@@ -53,12 +56,20 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String recoverToken(HttpServletRequest request) {
-        var authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null) {
-            return authHeader.replace("Bearer", "").replace(" ", "");
+        String jwt = null;
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("jwt")) {
+                    jwt = cookie.getValue();
+                }
+            }
         }
 
-        return null;
+        return jwt;
     }
+
 }

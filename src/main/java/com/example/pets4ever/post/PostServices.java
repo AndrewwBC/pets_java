@@ -54,13 +54,13 @@ public class PostServices {
 
 
     }
-    public List<PostResponseDTO> getAllPosts(String userId) {
+    public List<PostResponseDTO> getAllPosts(String username) {
         List<Post> allPosts =  this.postRepository.findAllByOrderByCreationDateDesc();
 
-        userRepository.findById(userId).orElseThrow(() ->
+        userRepository.findByUsername(username).orElseThrow(() ->
             new NoSuchElementException("Usuário não encontrado."));
 
-        return allPosts.stream().map(post -> getPostResponseDTO(userId, post)).toList();
+        return allPosts.stream().map(post -> getPostResponseDTO(username, post)).toList();
     }
     public PostResponseDTO getPost(String postId, String userId) {
 
@@ -89,8 +89,8 @@ public class PostServices {
     }
 
     @NotNull
-    private PostResponseDTO getPostResponseDTO(String userId, Post post) {
-        boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> userId.equals(like.getId()));
+    private PostResponseDTO getPostResponseDTO(String username, Post post) {
+        boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> username.equals(like.getUsername()));
         Long quantityOfLikes = (long) post.getLikes().size();
 
         List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();

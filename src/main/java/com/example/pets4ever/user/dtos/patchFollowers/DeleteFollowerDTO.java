@@ -1,6 +1,11 @@
 package com.example.pets4ever.user.dtos.patchFollowers;
 
+import jakarta.validation.constraints.NotNull;
+
 public record DeleteFollowerDTO(
-        String idOfUserToBeRemovedOfFollowersList,
+
+        @NotNull
+        String idOfFollowerToBeRemoved,
+        @NotNull
         String actionUserId)
 {}
