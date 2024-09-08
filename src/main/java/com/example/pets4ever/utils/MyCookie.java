@@ -8,7 +8,7 @@ public class MyCookie {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(httpOnly)
                 .secure(true) // Set true for production, HTTPS only
-                .sameSite("strict")
+                .sameSite("none")
                 .maxAge(age * 60 * 60)
                 .domain("andrewcampos.site") // Set for production
                 .path("/")
