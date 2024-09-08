@@ -50,8 +50,8 @@ public class UserController {
 
         MyCookie myCookie = new MyCookie();
 
-        ResponseCookie jwtCookie = myCookie.generateCookie("jwt", jwt, 0, true);
-        ResponseCookie hasSession = myCookie.generateCookie("hasSession", "yes", 0, false);
+        ResponseCookie jwtCookie = myCookie.generateCookie("jwt", jwt, 0, true, true);
+        ResponseCookie hasSession = myCookie.generateCookie("hasSession", "yes", 0, false, false);
 
         HttpHeaders headers = new HttpHeaders();
 
