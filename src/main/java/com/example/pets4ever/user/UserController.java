@@ -9,6 +9,7 @@ import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.*;
 import com.example.pets4ever.utils.GetUserIdFromToken;
+import com.example.pets4ever.utils.MyCookie;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ public class UserController {
     @Autowired
     GetUserIdFromToken getUserIdFromToken;
 
+
     @GetMapping("")
     public ResponseEntity<UserResponse> user(HttpServletRequest request) {
 
@@ -44,18 +46,13 @@ public class UserController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         String jwt = null;
 
-        Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
+        MyCookie myCookie = new MyCookie();
 
-        Cookie cookieHasSession = new Cookie("hasSession", "yes");
-        cookieHasSession.setHttpOnly(false);
-        cookieHasSession.setSecure(false);
-        cookieHasSession.setPath("/");
-        cookieHasSession.setMaxAge(0);
+        Cookie jwtCookie = myCookie.generateCookie("jwt", jwt, 0, true, true);
+        Cookie hasSession = myCookie.generateCookie("hasSession", "yes", 0, false, false);
 
-        response.addCookie(cookie);
-        response.addCookie(cookieHasSession);
+        response.addCookie(jwtCookie);
+        response.addCookie(hasSession);
 
         return ResponseEntity.ok("Sessão encerrada.");
     }

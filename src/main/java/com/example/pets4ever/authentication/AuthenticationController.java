@@ -2,12 +2,12 @@ package com.example.pets4ever.authentication;
 
 import com.example.pets4ever.infra.security.TokenService;
 import com.example.pets4ever.user.dtos.signInDTO.SignInDTO;
-import com.example.pets4ever.user.responses.SignInResponse;
 import com.example.pets4ever.user.dtos.signInDTO.SignInWithSessionDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserService;
 import com.example.pets4ever.user.validations.login.SignInValidate;
 import com.example.pets4ever.utils.GetUserIdFromToken;
+import com.example.pets4ever.utils.MyCookie;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,23 +44,16 @@ public class AuthenticationController {
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-        var jwt = tokenService.generateToken((User) auth.getPrincipal());
-
-
-        Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60); // 24 Horas
-
-        Cookie cookieHasSession = new Cookie("hasSession", "yes");
-        cookieHasSession.setHttpOnly(false);
-        cookieHasSession.setSecure(false);
-        cookieHasSession.setPath("/");
-        cookieHasSession.setMaxAge(24 * 60 * 60);
-
+        String jwt = tokenService.generateToken((User) auth.getPrincipal());
         System.out.println(jwt);
-        System.out.println(cookie);
-        response.addCookie(cookie);
-        response.addCookie(cookieHasSession);
+
+        MyCookie myCookie = new MyCookie();
+
+        Cookie jwtCookie = myCookie.generateCookie("jwt", jwt, 24, true, true);
+        Cookie hasSession = myCookie.generateCookie("hasSession", "yes", 24, false, false);
+
+        response.addCookie(jwtCookie);
+        response.addCookie(hasSession);
 
         return ResponseEntity.ok("Logado com sucesso.");
     }
