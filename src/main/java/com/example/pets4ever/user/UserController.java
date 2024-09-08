@@ -45,8 +45,6 @@ public class UserController {
         String jwt = null;
 
         Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(0);
 
