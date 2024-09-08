@@ -48,8 +48,6 @@ public class AuthenticationController {
 
 
         Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60); // 24 Horas
 
