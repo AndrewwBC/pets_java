@@ -46,15 +46,24 @@ public class AuthenticationController {
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var jwt = tokenService.generateToken((User) auth.getPrincipal());
 
+        String hasSession = null;
+
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60); // 24 Horas
 
+        Cookie cookieHasSession = new Cookie("hasSession", "yes");
+        cookieHasSession.setHttpOnly(false);
+        cookieHasSession.setSecure(false);
+        cookieHasSession.setPath("/");
+        cookieHasSession.setMaxAge(24 * 60 * 60);
+
         System.out.println(jwt);
         System.out.println(cookie);
         response.addCookie(cookie);
+        response.addCookie(cookieHasSession);
 
         return ResponseEntity.ok("Logado com sucesso.");
     }

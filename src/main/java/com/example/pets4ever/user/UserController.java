@@ -9,7 +9,9 @@ import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
 import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.*;
 import com.example.pets4ever.utils.GetUserIdFromToken;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,28 @@ public class UserController {
 
         UserResponse user = userService.user(id);
         return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        String jwt = null;
+
+        Cookie cookie = new Cookie("jwt", jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        Cookie cookieHasSession = new Cookie("hasSession", "yes");
+        cookieHasSession.setHttpOnly(false);
+        cookieHasSession.setSecure(false);
+        cookieHasSession.setPath("/");
+        cookieHasSession.setMaxAge(0);
+
+        response.addCookie(cookie);
+        response.addCookie(cookieHasSession);
+
+        return ResponseEntity.ok("Sessão encerrada.");
     }
     
     @PostMapping
