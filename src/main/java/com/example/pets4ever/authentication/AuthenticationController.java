@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +41,7 @@ public class AuthenticationController {
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody @Valid SignInDTO data, HttpServletResponse response) {
+    public ResponseEntity<?> signin(@RequestBody @Valid SignInDTO data) {
         this.signInValidate.validate(data);
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
@@ -49,13 +51,15 @@ public class AuthenticationController {
 
         MyCookie myCookie = new MyCookie();
 
-        Cookie jwtCookie = myCookie.generateCookie("jwt", jwt, 24, true, true);
-        Cookie hasSession = myCookie.generateCookie("hasSession", "yes", 24, false, false);
+        ResponseCookie jwtCookie = myCookie.generateCookie("jwt", jwt, 24, true);
+        ResponseCookie hasSession = myCookie.generateCookie("hasSession", "yes", 24, false);
 
-        response.addCookie(jwtCookie);
-        response.addCookie(hasSession);
+        HttpHeaders headers = new HttpHeaders();
 
-        return ResponseEntity.ok("Logado com sucesso.");
+        headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, hasSession.toString());
+
+        return ResponseEntity.ok().headers(headers).body("Logado com sucesso.");
     }
 
     @GetMapping("/session")

@@ -15,7 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,18 +45,20 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout() {
         String jwt = null;
 
         MyCookie myCookie = new MyCookie();
 
-        Cookie jwtCookie = myCookie.generateCookie("jwt", jwt, 0, true, true);
-        Cookie hasSession = myCookie.generateCookie("hasSession", "yes", 0, false, false);
+        ResponseCookie jwtCookie = myCookie.generateCookie("jwt", jwt, 0, true);
+        ResponseCookie hasSession = myCookie.generateCookie("hasSession", "yes", 0, false);
 
-        response.addCookie(jwtCookie);
-        response.addCookie(hasSession);
+        HttpHeaders headers = new HttpHeaders();
 
-        return ResponseEntity.ok("Sessão encerrada.");
+        headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, hasSession.toString());
+
+        return ResponseEntity.ok().headers(headers).body("Sessão encerrada.");
     }
     
     @PostMapping

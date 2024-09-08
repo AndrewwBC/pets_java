@@ -1,17 +1,18 @@
 package com.example.pets4ever.utils;
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 
 
 public class MyCookie {
 
-    public Cookie generateCookie(String name, String value, Integer age, boolean HttpOnly, boolean setSecure) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(HttpOnly);
-        cookie.setSecure(setSecure);
-        cookie.setPath("/");
-        cookie.setDomain("andrewcampos.site");
-        cookie.setMaxAge(age * 60 * 60);
-
+    public ResponseCookie generateCookie(String name, String value, Integer age, boolean httpOnly) {
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .httpOnly(httpOnly)
+                .secure(true) // Set true for production, HTTPS only
+                .sameSite("strict")
+                .maxAge(age * 60 * 60)
+                .domain("andrewcampos.site") // Set for production
+                .path("/")
+                .build();
         return cookie;
     }
 
