@@ -58,9 +58,6 @@ public class AuthenticationController {
 
         headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
         headers.add(HttpHeaders.SET_COOKIE, hasSession.toString());
-        headers.add("Access-Control-Allow-Origin", "https://pets4ever.site");
-        headers.add("Access-Control-Allow-Credentials", "true");
-
 
         return ResponseEntity.ok().headers(headers).body("Logado com sucesso.");
     }
