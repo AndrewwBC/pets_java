@@ -58,7 +58,7 @@ public class UserController {
         headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
         headers.add(HttpHeaders.SET_COOKIE, hasSession.toString());
 
-        return ResponseEntity.ok().headers(headers).body("Sessão encerrada.");
+        return ResponseEntity.ok().headers(headers).body("Sessão encerrada");
     }
     
     @PostMapping
