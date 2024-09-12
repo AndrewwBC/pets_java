@@ -101,6 +101,45 @@ public class UserService {
         return UserResponse.fromData(user, followersData, followingsData, userPostsAndQuantityOfPosts);
     }
 
+    public UserResponse userByUsername(String username) {
+
+        User user = this.userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+
+
+        List<User> followers = user.getFollowedByUsers();
+        List<User> following = user.getFollowingUsers();
+        List<Post> userPosts = user.getPosts();
+
+        List<UserIdNameAndImageProps> listOfUsersToFollowersData = followers.stream().map(followUser ->
+                new UserIdNameAndImageProps(followUser.getUsername(), followUser.getId(), followUser.getProfileImgUrl())
+        ).collect(Collectors.toList());
+
+        FollowersData followersData = new FollowersData(listOfUsersToFollowersData, followers.size());
+
+        List<UserIdNameAndImageProps> listOfUsersToFollowingData = following.stream().map(followingUser ->
+                new UserIdNameAndImageProps(followingUser.getUsername(), followingUser.getId(), followingUser.getProfileImgUrl())
+        ).collect(Collectors.toList());
+
+        FollowingsData followingsData = new FollowingsData(listOfUsersToFollowingData, listOfUsersToFollowingData.size());
+
+        List<PostResponseDTO> postResponseDTOList = userPosts.stream().map(post -> {
+            List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
+                    new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getUser().getUsername(), comment.getComment())).collect(Collectors.toList());
+
+            Long quantityOfLikes = (long) post.getLikes().size();
+
+            List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
+            boolean userLikedThisPost = username.equals(post.getUser().getUsername());
+
+            return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes, listOflikes, commentPostResponseDTOS);
+        }).collect(Collectors.toList());
+
+        UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts = new UserPostsAndQuantityOfPosts(postResponseDTOList, postResponseDTOList.size());
+
+        return UserResponse.fromData(user, followersData, followingsData, userPostsAndQuantityOfPosts);
+    }
+
+
     public String create(signUpDTO signupDTO) throws Exception {
 
         this.registerValidate.forEach(v -> v.validate(signupDTO));
@@ -170,7 +209,7 @@ public class UserService {
         System.out.println(profileImg);
         this.updateProfileImageValidate.validate(profileImg.getFile());
 
-        User user = this.findUserOrElseThrow(userId);
+        User user = this.findUserByIdOrElseThrow(userId);
 
 
         String uniqueFilename = this.amazonClient.uploadFile(profileImg.getFile());
@@ -188,7 +227,7 @@ public class UserService {
 
     public Response patchName(String userId, PatchUsernameDTO patchUsernameDTO) {
 
-        User user = this.findUserOrElseThrow(userId);
+        User user = this.findUserByIdOrElseThrow(userId);
 
         user.setUsername(patchUsernameDTO.username());
         userRepository.save(user);
@@ -199,8 +238,8 @@ public class UserService {
 
     @Transactional
     public  Response patchFollowing(PatchFollowingDTO patchFollowingDTO) {
-        User actionUser = this.findUserOrElseThrow(patchFollowingDTO.actionUserId());
-        User userToBeFollowedOrUnfollowed = this.findUserOrElseThrow(patchFollowingDTO.idOfUserToBeFollowed());
+        User actionUser = this.findUserByUsernameOrElseThrow(patchFollowingDTO.actionUserUsername());
+        User userToBeFollowedOrUnfollowed = this.findUserByUsernameOrElseThrow(patchFollowingDTO.usernameOfUserToBeFollowed());
 
         if(actionUser == userToBeFollowedOrUnfollowed) {
             throw new PatchFollowingException("Usuário não pode seguir a si mesmo.");
@@ -232,8 +271,8 @@ public class UserService {
 
         System.out.println(deleteFollowerDTO);
 
-        User user = findUserOrElseThrow(deleteFollowerDTO.actionUserId());
-        User followerToBeRemoved = findUserOrElseThrow(deleteFollowerDTO.idOfFollowerToBeRemoved());
+        User user = findUserByIdOrElseThrow(deleteFollowerDTO.actionUserId());
+        User followerToBeRemoved = findUserByIdOrElseThrow(deleteFollowerDTO.idOfFollowerToBeRemoved());
 
         if(user.getFollowedByUsers().contains(followerToBeRemoved)) {
             user.getFollowedByUsers().remove(followerToBeRemoved);
@@ -249,10 +288,16 @@ public class UserService {
 
     }
 
-    private User findUserOrElseThrow(String userId) {
+    private User findUserByIdOrElseThrow(String userId) {
 
          return userRepository.findById(userId).orElseThrow(()
                     -> new NoSuchElementException("Usuário não encontrado."));
+    }
+
+    private User findUserByUsernameOrElseThrow(String username) {
+
+        return userRepository.findByUsername(username).orElseThrow(()
+                -> new NoSuchElementException("Usuário não encontrado."));
     }
 }
 

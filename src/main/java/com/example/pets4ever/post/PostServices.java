@@ -70,11 +70,11 @@ public class PostServices {
         return getPostResponseDTO(userId, post);
 
     }
-    public String UpdatePostToReceiveLikesService(String postId, String userId){
+    public String UpdatePostToReceiveLikesService(String postId, String username){
 
         Post post = this.postRepository.findById(postId).orElseThrow(() ->
                 new NoSuchElementException("Postagem não encontrada!"));
-        User user = this.userRepository.findById(userId).orElseThrow(() ->
+        User user = this.userRepository.findByUsername(username).orElseThrow(() ->
                 new NoSuchElementException("Usuário não encontrado!"));
 
         if(post.getLikes().contains(user)) {

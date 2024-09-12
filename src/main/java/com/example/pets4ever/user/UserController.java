@@ -44,6 +44,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponse> userByUsername(@PathVariable String username) {
+        UserResponse user = userService.userByUsername(username);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         String jwt = null;
@@ -88,6 +94,8 @@ public class UserController {
 
     @PatchMapping("/following")
     public ResponseEntity<Response> following(@RequestBody @Valid PatchFollowingDTO patchFollowingDTO){
+        System.out.println("rota following");
+        System.out.println(patchFollowingDTO);
         return ResponseEntity.status(HttpStatus.OK).body(userService.patchFollowing(patchFollowingDTO));
     }
 

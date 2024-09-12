@@ -11,14 +11,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserIdNameAndImageProps {
 
-    private String name;
+    private String username;
     private String userId;
     private String profileImgUrl;
 
     @Override
     public String toString() {
         return "UserIdNameAndImgProps{" +
-                "name='" + name + '\'' +
+                "username='" + username + '\'' +
                 ", userId='" + userId + '\'' +
                 ", profileImgUrl='" + profileImgUrl + '\'' +
                 '}';

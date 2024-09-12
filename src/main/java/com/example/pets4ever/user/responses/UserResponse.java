@@ -15,7 +15,7 @@ public record UserResponse (
         String username,
         String userId,
         String email,
-        String userImageProfileUrl,
+        String profileImgUrl,
         FollowersData followers,
         FollowingsData following,
         UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts
