@@ -17,7 +17,7 @@ public class signUpDTO {
         String email;
         @Pattern(
                 regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$",
-                message = "A senha deve ter de 8 a 64 caracteres, incluir pelotas uma letra maiúscula, minúscula e um número."
+                message = "A senha deve ter de 8 a 64 caracteres, incluir uma letra maiúscula, minúscula e um número."
         )
         String password;
 
