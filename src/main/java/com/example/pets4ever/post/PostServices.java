@@ -70,7 +70,7 @@ public class PostServices {
         return getPostResponseDTO(userId, post);
 
     }
-    public String UpdatePostToReceiveLikesService(String postId, String username){
+    public PostResponseDTO UpdatePostToReceiveLikesService(String postId, String username){
 
         Post post = this.postRepository.findById(postId).orElseThrow(() ->
                 new NoSuchElementException("Postagem não encontrada!"));
@@ -80,12 +80,14 @@ public class PostServices {
         if(post.getLikes().contains(user)) {
             post.getLikes().remove(user);
             this.postRepository.save(post);
-            return "Curtida removida.";
+
+            return getPostResponseDTO(username, post);
         }
 
         post.getLikes().add(user);
         this.postRepository.save(post);
-        return "Curtida adicionada.";
+        return getPostResponseDTO(username, post);
+
     }
 
     @NotNull

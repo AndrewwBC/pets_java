@@ -13,6 +13,7 @@ import java.util.List;
 
 public record UserResponse (
         String username,
+        String fullname,
         String userId,
         String email,
         String profileImgUrl,
@@ -23,6 +24,7 @@ public record UserResponse (
     public static UserResponse fromData(User user, FollowersData followersData, FollowingsData followingOfProfileDTOS, UserPostsAndQuantityOfPosts userPostsAndQuantityOfPosts) {
         return new UserResponse(
                 user.getUsername(),
+                user.getFullname(),
                 user.getId(),
                 user.getEmail(),
                 user.getProfileImgUrl(),

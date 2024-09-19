@@ -4,8 +4,12 @@ import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -19,6 +23,9 @@ public class Comment {
     private String id;
 
     private String comment;
+
+    @CreationTimestamp
+    private LocalDateTime creationDate;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

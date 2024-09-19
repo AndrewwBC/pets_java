@@ -55,9 +55,9 @@ public class PostController {
 //    }
 
     @PatchMapping("/postlike")
-    public ResponseEntity<String> patchPostLike(@RequestBody UpdatePostToReceiveLikeDTO data) {
+    public ResponseEntity<PostResponseDTO> patchPostLike(@RequestBody UpdatePostToReceiveLikeDTO data) {
         System.out.println(data);
-        return ResponseEntity.ok().body(this.postServices.UpdatePostToReceiveLikesService(data.postId(), data.username()));
+        return ResponseEntity.status(HttpStatus.OK).body(this.postServices.UpdatePostToReceiveLikesService(data.postId(), data.username()));
     }
 
 }
