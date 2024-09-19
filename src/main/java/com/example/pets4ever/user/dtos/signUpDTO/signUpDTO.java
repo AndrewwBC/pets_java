@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 public class signUpDTO {
 
-        @Length(min = 1, max = 64, message = "Nome deve ter de 1 a 64 caractéres")
+        @Length(min = 1, message = "Nome completo deve ter no mínimo 1 caractér")
         @NotNull(message = "Preencha o nome.")
         String fullname;
         @Length(min = 3, max = 32, message = "Nome de usuário deve ter de 3 a 32 caractéres")

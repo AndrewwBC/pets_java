@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Length(min = 3, max = 64, message = "Nome de 3 a 64 caractéres!")
+    @Length(min = 1, message = "No mínimo 1 caractéres")
     @NotEmpty(message = "Nome completo deve ser preenchido")
     private String fullname;
 
