@@ -3,7 +3,7 @@ name: Deploy to Oracle VM
 on:
   push:
     branches:
-      - feature_architecture
+      - green
 
 jobs:
   deploy:
@@ -28,9 +28,9 @@ jobs:
 
       - name: Setup SSH
         env:
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PRIVATE_KEY: ${{ secrets.SSH_GREEN }}
           PORT: ${{ secrets.SSH_PORT }}
-          HOST: ${{ secrets.SSH_HOST }}
+          HOST: ${{ secrets.GREEN_HOST }}
           USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
           mkdir -p ~/.ssh
@@ -48,7 +48,7 @@ jobs:
       - name: Restart Spring Boot Application
         env:
             PORT: ${{ secrets.SSH_PORT }}
-            HOST: ${{ secrets.SSH_HOST }}
+            HOST: ${{ secrets.GREEN_HOST }}
             USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
           ssh -i ~/.ssh/id_rsa $USERNAME@$HOST << 'EOF'
