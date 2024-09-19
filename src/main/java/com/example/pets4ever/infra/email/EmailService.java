@@ -1,6 +1,7 @@
 package com.example.pets4ever.infra.email;
 
 import com.example.pets4ever.infra.email.Code.CacheService;
+import com.example.pets4ever.infra.email.response.EmailResponse;
 import com.example.pets4ever.infra.exceptions.email.EmailAlreadyInUseException;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class EmailService {
 
     }
 
-    public String sendCodeToConfirmEmailUpdate(String email){
+    public EmailResponse sendCodeToConfirmEmailUpdate(String email){
 
         boolean emailAlreadyInUse =  userRepository.findByEmail(email).isPresent();
 
@@ -44,9 +45,9 @@ public class EmailService {
 
         this.sendSimpleMessage(email, "CODIGO VERIFICAÇÃO", emailText);
 
-        return email;
+        return new EmailResponse(email, "Código enviado");
     }
-    public String sendNewCodeToConfirmEmailUpdate(String email){
+    public EmailResponse sendNewCodeToConfirmEmailUpdate(String email){
 
         boolean emailAlreadyInUse =  userRepository.findByEmail(email).isPresent();
 
@@ -59,7 +60,7 @@ public class EmailService {
 
         this.sendSimpleMessage(email, "RENOVAÇÃO DE CÓDIGO", emailText);
 
-        return email;
+        return new EmailResponse(email, "Código reenviado");
     }
 
 
