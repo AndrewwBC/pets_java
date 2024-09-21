@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: blue_service
+          uri: https://api.pets4ever.site:443
+          predicates:
+            - Weight=resource-group,90
+
+        - id: green_service
+          uri: https://apigreen.pets4ever.site:443
+          predicates:
+            - Weight=resource-group,10
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
