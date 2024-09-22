@@ -1,7 +1,7 @@
 package com.example.pets4ever.user.validations.login;
 
-import com.example.pets4ever.user.dtos.signInDTO.SignInDTO;
+import com.example.pets4ever.user.dtos.UserSignInDTO.UserSignInDTO;
 
 public interface SignInValidate {
-    void validate(SignInDTO signInDTO);
+    void validate(UserSignInDTO userSignInDTO);
 }

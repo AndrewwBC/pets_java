@@ -1,4 +1,4 @@
-package com.example.pets4ever.user.dtos.updateEmailDTO;
+package com.example.pets4ever.user.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

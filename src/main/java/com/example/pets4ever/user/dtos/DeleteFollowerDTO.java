@@ -1,4 +1,4 @@
-package com.example.pets4ever.user.dtos.patchFollowers;
+package com.example.pets4ever.user.dtos;
 
 import jakarta.validation.constraints.NotNull;
 

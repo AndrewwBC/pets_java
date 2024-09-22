@@ -33,14 +33,12 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = recoverToken(request);
-
-        System.out.println("Toookeen: " + jwt);
-
+        
             if(jwt != null) {
                 try {
                     String subject = tokenService.validateTokenAndGetUserId(jwt);
                     System.out.println(subject);
-                    User user = userRepository.findById(subject).orElseThrow();
+                    User user = userRepository.findByUsername(subject).orElseThrow();
 
                     var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);

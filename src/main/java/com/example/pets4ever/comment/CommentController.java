@@ -5,7 +5,6 @@ import com.example.pets4ever.comment.DTO.CommentDTO;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.PostRepository;
 import com.example.pets4ever.user.UserRepository;
-import com.example.pets4ever.utils.GetUserIdFromToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

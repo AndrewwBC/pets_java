@@ -1,14 +1,10 @@
 package com.example.pets4ever.post;
 
-import com.example.pets4ever.post.DTO.FeedDTO;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
-import com.example.pets4ever.post.DTO.PostShowDTO;
 import com.example.pets4ever.post.DTO.UpdatePostToReceiveLikeDTO;
 import com.example.pets4ever.post.response.CreateResponse;
-import com.example.pets4ever.utils.GetUserIdFromToken;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.persistence.PersistenceException;
+import com.example.pets4ever.utils.GetUsernameFromToken;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +21,7 @@ public class PostController {
     @Autowired
     PostServices postServices;
     @Autowired
-    GetUserIdFromToken getUserIdFromToken;
+    GetUsernameFromToken getUsernameFromToken;
 
     @GetMapping("/{username}")
     public ResponseEntity<List<PostResponseDTO>> index(@PathVariable String username){

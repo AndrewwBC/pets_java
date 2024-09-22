@@ -1,17 +1,15 @@
 package com.example.pets4ever.authentication;
 
 import com.example.pets4ever.infra.security.TokenService;
-import com.example.pets4ever.user.dtos.signInDTO.SignInDTO;
-import com.example.pets4ever.user.dtos.signInDTO.SignInWithSessionDTO;
+import com.example.pets4ever.user.dtos.UserSignInDTO.UserSignInDTO;
+import com.example.pets4ever.user.dtos.UserSignInDTO.SignInWithSessionDTO;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserService;
 import com.example.pets4ever.user.validations.login.SignInValidate;
-import com.example.pets4ever.utils.GetUserIdFromToken;
+import com.example.pets4ever.utils.GetUsernameFromToken;
 import com.example.pets4ever.utils.MyCookie;
 import com.example.pets4ever.utils.RecoverTokenFromHeaderWithoutBearer;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     @Autowired
-    GetUserIdFromToken getUserIdFromToken;
+    GetUsernameFromToken getUsernameFromToken;
     @Autowired
     TokenService tokenService;
     @Autowired
@@ -41,7 +39,7 @@ public class AuthenticationController {
     RecoverTokenFromHeaderWithoutBearer recoverTokenFromHeaderWithoutBearer;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody @Valid SignInDTO data) {
+    public ResponseEntity<?> signin(@RequestBody @Valid UserSignInDTO data) {
         this.signInValidate.validate(data);
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
@@ -64,7 +62,7 @@ public class AuthenticationController {
 
     @GetMapping("/session")
     public ResponseEntity<SignInWithSessionDTO> loginWithSession(HttpServletRequest request) {
-        String userId = getUserIdFromToken.recoverUserId(request);
+        String userId = getUsernameFromToken.recoverUsername(request);
         User user = this.userService.signin(userId);
         return ResponseEntity.ok(new SignInWithSessionDTO(userId, user.getUsername(), user.getEmail(), user.getProfileImgUrl()));
     }

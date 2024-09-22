@@ -1,8 +1,8 @@
-package com.example.pets4ever.user.dtos.signInDTO;
+package com.example.pets4ever.user.dtos.UserSignInDTO;
 
 import jakarta.validation.constraints.*;
 
-public record SignInDTO(
+public record UserSignInDTO(
 
         @NotNull(message = "Preencha o Email!")
         @Email(message = "Email inválido!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")

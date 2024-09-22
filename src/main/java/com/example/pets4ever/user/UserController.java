@@ -1,18 +1,15 @@
 package com.example.pets4ever.user;
 
-import com.example.pets4ever.user.dtos.PatchNameDTO.PatchUsernameDTO;
-import com.example.pets4ever.user.dtos.changeProfileImageDTO.ProfileImg;
-import com.example.pets4ever.user.dtos.patchFollowers.DeleteFollowerDTO;
-import com.example.pets4ever.user.dtos.patchFollowing.PatchFollowingDTO;
-import com.example.pets4ever.user.dtos.signUpDTO.signUpDTO;
-import com.example.pets4ever.user.dtos.updateDTO.UpdateDTO;
-import com.example.pets4ever.user.dtos.updateEmailDTO.UpdateEmailDTO;
+import com.example.pets4ever.user.dtos.PatchProfileDTO;
+import com.example.pets4ever.user.dtos.ProfileImgDTO;
+import com.example.pets4ever.user.dtos.DeleteFollowerDTO;
+import com.example.pets4ever.user.dtos.PatchFollowingDTO;
+import com.example.pets4ever.user.dtos.SignInDTO;
+import com.example.pets4ever.user.dtos.UpdateEmailDTO;
 import com.example.pets4ever.user.responses.*;
-import com.example.pets4ever.utils.GetUserIdFromToken;
+import com.example.pets4ever.utils.GetUsernameFromToken;
 import com.example.pets4ever.utils.MyCookie;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,15 +29,15 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    GetUserIdFromToken getUserIdFromToken;
+    GetUsernameFromToken getUsernameFromToken;
 
 
     @GetMapping("")
     public ResponseEntity<UserResponse> user(HttpServletRequest request) {
 
-        String id = getUserIdFromToken.recoverUserId(request);
+        String username = getUsernameFromToken.recoverUsername(request);
 
-        UserResponse user = userService.user(id);
+        UserResponse user = userService.userByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
@@ -68,12 +65,8 @@ public class UserController {
     }
     
     @PostMapping
-    public ResponseEntity<Object> signup(@RequestBody @Valid signUpDTO data) throws Exception {
+    public ResponseEntity<Object> signup(@RequestBody @Valid SignInDTO data) {
         return ResponseEntity.ok(userService.create(data));
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable String id, @RequestBody UpdateDTO updateDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.update(updateDTO, id));
     }
 
     @PatchMapping("/email/{id}")
@@ -81,15 +74,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateEmail(updateEmailDTO, id));
     }
 
-    @PatchMapping("/name/{id}")
-    public ResponseEntity<Response> username(@PathVariable String id, @RequestBody @Valid PatchUsernameDTO patchUsernameDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.patchName(id, patchUsernameDTO));
+    @PatchMapping("/profile/{id}")
+    public ResponseEntity<Response> profile(@PathVariable String id, @RequestBody @Valid PatchProfileDTO patchProfileDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.patchProfile(id, patchProfileDTO));
     }
 
     @PatchMapping("/{id}/profile-img")
-    public ResponseEntity<Response> profileImg(@PathVariable String id, @ModelAttribute ProfileImg profileImg) throws IOException {
-        System.out.println(profileImg);
-        return ResponseEntity.ok(userService.patchProfileImg(profileImg, id));
+    public ResponseEntity<Response> profileImg(@PathVariable String id, @ModelAttribute ProfileImgDTO profileImgDTO) throws IOException {
+        System.out.println(profileImgDTO);
+        return ResponseEntity.ok(userService.patchProfileImg(profileImgDTO, id));
     }
 
     @PatchMapping("/following")

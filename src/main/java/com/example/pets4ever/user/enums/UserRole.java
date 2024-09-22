@@ -1,4 +1,4 @@
-package com.example.pets4ever.user;
+package com.example.pets4ever.user.enums;
 
 import lombok.Getter;
 

@@ -1,8 +1,8 @@
-package com.example.pets4ever.user.validations.register;
+package com.example.pets4ever.user.validations.create;
 
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
 import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
-import com.example.pets4ever.user.dtos.signUpDTO.signUpDTO;
+import com.example.pets4ever.user.dtos.SignInDTO;
 import com.example.pets4ever.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class RegisterValidations implements RegisterValidate{
+public class CreateValidations implements CreateValidate {
 
     @Autowired
     UserRepository userRepository;
     @Override
-    public void validate(signUpDTO signupDTO) {
+    public void validate(SignInDTO signupDTO) {
 
         boolean usernameAlreadyInUse = userRepository.existsByUsername(signupDTO.getUsername());
         boolean emailAlreadyInUse = userRepository.existsByEmail(signupDTO.getEmail());

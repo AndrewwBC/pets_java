@@ -3,6 +3,7 @@ package com.example.pets4ever.user;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.post.Post;
+import com.example.pets4ever.user.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
