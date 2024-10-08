@@ -3,6 +3,7 @@ package com.example.pets4ever.comment;
 
 import com.example.pets4ever.comment.DTO.CommentDTO;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
+import com.example.pets4ever.comment.DTO.PatchCommentDTO;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.post.PostRepository;
 import com.example.pets4ever.user.User;
@@ -27,13 +28,13 @@ public class CommentService {
 
     public String insertComment(CommentDTO commentDTO) {
 
-        User user = this.userRepository.findById(commentDTO.getUserId()).orElseThrow(() ->
+        User user = this.userRepository.findById(commentDTO.userId()).orElseThrow(() ->
             new NoSuchElementException("Usuário não encontrado!"));
 
-        Post post = this.postRepository.findById(commentDTO.getPostId()).orElseThrow(() ->
+        Post post = this.postRepository.findById(commentDTO.postId()).orElseThrow(() ->
                 new NoSuchElementException("Postagem não encontrada!"));
 
-        Comment comment = new Comment(commentDTO.getComment(), user, post);
+        Comment comment = new Comment(commentDTO.comment(), user, post);
 
         try {
             this.commentRepository.save(comment);
@@ -57,6 +58,26 @@ public class CommentService {
         }
 
         return comments.stream()
-                .map(comment -> CommentPostResponseDTO.fromData(comment.getUser(), comment.getComment())).toList();
+                .map(comment -> CommentPostResponseDTO.fromData(comment.getUser(), comment)).toList();
+    }
+
+
+    public String patchComment(String id, PatchCommentDTO patchCommentDTO) {
+        Comment comment = this.commentOrElseThrow(id);
+
+        comment.setComment(patchCommentDTO.comment());
+        this.commentRepository.save(comment);
+
+        return "Comentário editado";
+    }
+
+    public String deleteComment(String id){
+        this.commentRepository.deleteById(id);
+        return "Comentário deletado";
+    }
+
+    private Comment commentOrElseThrow(String id) {
+        return this.commentRepository.findById(id).orElseThrow(()
+                -> new NoSuchElementException("Comentário não encontrado."));
     }
 }

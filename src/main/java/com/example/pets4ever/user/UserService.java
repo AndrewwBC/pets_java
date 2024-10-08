@@ -8,20 +8,14 @@ import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
-import com.example.pets4ever.user.dtos.PatchProfileDTO;
-import com.example.pets4ever.user.dtos.ProfileImgDTO;
-import com.example.pets4ever.user.dtos.DeleteFollowerDTO;
-import com.example.pets4ever.user.dtos.PatchFollowingDTO;
+import com.example.pets4ever.user.dtos.*;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
 import com.example.pets4ever.user.dtos.profileDTO.UserIdNameAndImageProps;
 import com.example.pets4ever.user.dtos.profileDTO.FollowingsData;
 import com.example.pets4ever.user.dtos.profileDTO.UserPostsAndQuantityOfPosts;
-import com.example.pets4ever.user.dtos.SignInDTO;
-import com.example.pets4ever.user.dtos.UpdateEmailDTO;
 import com.example.pets4ever.user.enums.UserRole;
 import com.example.pets4ever.user.responses.*;
-import com.example.pets4ever.user.validations.create.CreateValidate;
-import com.example.pets4ever.user.validations.update.updateProfileImage.UpdateProfileImageValidate;
+import com.example.pets4ever.user.validations.UserValidations;
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,10 +40,7 @@ public class UserService {
     TokenService tokenService;
 
     @Autowired
-    List<CreateValidate> createValidate;
-
-    @Autowired
-    UpdateProfileImageValidate updateProfileImageValidate;
+    UserValidations userValidations;
 
     private final AmazonClient amazonClient;
 
@@ -59,9 +50,18 @@ public class UserService {
     }
 
     public UserResponse userByUsername(String username) {
-
         User user = this.userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+        return userData(user);
+    }
 
+    public UserResponse userById(String username) {
+        User user = this.userRepository.findById(username).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+        return userData(user);
+    }
+
+    private UserResponse userData(User user) {
+
+        String username = user.getUsername();
 
         List<User> followers = user.getFollowedByUsers();
         List<User> following = user.getFollowingUsers();
@@ -81,7 +81,7 @@ public class UserService {
 
         List<PostResponseDTO> postResponseDTOList = userPosts.stream().map(post -> {
             List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
-                    new CommentPostResponseDTO(comment.getUserId(), comment.getPost().getId(), comment.getUser().getUsername(), comment.getComment())).collect(Collectors.toList());
+                    CommentPostResponseDTO.fromData(comment.getUser(), comment)).collect(Collectors.toList());
 
             Long quantityOfLikes = (long) post.getLikes().size();
 
@@ -97,9 +97,9 @@ public class UserService {
     }
 
 
-    public String create(SignInDTO signupDTO) {
+    public String create(SignUpDTO signupDTO) {
 
-        this.createValidate.forEach(v -> v.validate(signupDTO));
+        this.userValidations.signUpValidate(signupDTO);
 
         UserRole userRole;
         if (Objects.equals(signupDTO.getEmail(), admMail)) {
@@ -115,75 +115,70 @@ public class UserService {
         return "Usuário registrado com sucesso!";
     }
 
-    public UpdateEmailResponse updateEmail(UpdateEmailDTO updateEmailDTO, String userId) {
+    public MessageResponse updateEmail(UpdateEmailDTO updateEmailDTO, String userId) {
 
         User user = this.userRepository.findById(userId).orElseThrow(()
                 -> new NoSuchElementException("Usuário não encontrado"));
 
         boolean emailAlreadyInUse = this.userRepository.existsByEmail(updateEmailDTO.email());
         if(emailAlreadyInUse) {
-            return new UpdateEmailResponse("Email atualizado!");
+            return new MessageResponse("Email atualizado!");
         }
 
         try {
             user.setEmail(updateEmailDTO.email());
 
             this.userRepository.save(user);
-            return new UpdateEmailResponse("Email atualizado!");
+            return new MessageResponse("Email atualizado!");
         } catch(PersistenceException exception) {
             throw new PersistenceException("Erro ao editar o email.");
         }
     }
 
     public String delete(String userId) {
-
-        Optional<User> userToBeDeleted = this.userRepository.findById(userId);
-
-        if (userToBeDeleted.isPresent()) {
-            this.userRepository.delete(userToBeDeleted.get());
-            return userToBeDeleted.get().getEmail();
-        }
-        return null;
+        User user = findUserByIdOrElseThrow(userId);
+        this.userRepository.delete(user);
+        return "Usuário excluido";
     }
 
-    public Response patchProfileImg(ProfileImgDTO profileImgDTO, String userId) throws IOException {
+    public FieldMessageResponse patchProfileImg(ProfileImgDTO profileImgDTO, String userId) throws IOException {
 
-        System.out.println(profileImgDTO);
-        this.updateProfileImageValidate.validate(profileImgDTO.getFile());
+        this.userValidations.patchProfileImage(profileImgDTO.getFile());
 
         User user = this.findUserByIdOrElseThrow(userId);
-
 
         String uniqueFilename = this.amazonClient.uploadFile(profileImgDTO.getFile());
         user.setProfileImgUrl(uniqueFilename);
 
         userRepository.save(user);
-        return Response.fromString("Imagem atualizada");
+        return FieldMessageResponse.fromData("image", uniqueFilename, "Imagem atualizada");
 
     }
 
-    public User signin(String userId) {
-        return this.userRepository.findById(userId).orElseThrow(() ->
-                new NoSuchElementException("Usuário não encontrado."));
-    }
+    public List<FieldMessageResponse> patchProfile(String userId, PatchProfileDTO patchProfileDTO) {
 
-
-    // profile se refere a informações do perfil, como username e fullname.
-    // img do perfil ja possui sua rota.
-    public Response patchProfile(String userId, PatchProfileDTO patchProfileDTO) {
+        this.userValidations.patchProfileValidate(patchProfileDTO);
+        List<FieldMessageResponse> response = new ArrayList<>();
 
         User user = this.findUserByIdOrElseThrow(userId);
+
+        if(!Objects.equals(patchProfileDTO.fullname(), user.getFullname())) {
+            response.add(FieldMessageResponse.fromData("fullname", user.getFullname(), "Atualizado"));
+        }
+
+        if(!Objects.equals(patchProfileDTO.username(), user.getUsername())){
+            response.add(FieldMessageResponse.fromData("username", user.getUsername(), "Atualizado"));
+        }
 
         user.setUsername(patchProfileDTO.username());
         user.setFullname(patchProfileDTO.fullname());
         userRepository.save(user);
 
-        return Response.fromString("Nome atualizado.");
+        return response;
     }
 
-
     @Transactional
-    public  Response patchFollowing(PatchFollowingDTO patchFollowingDTO) {
+    public MessageResponse patchFollowing(PatchFollowingDTO patchFollowingDTO) {
         User actionUser = this.findUserByUsernameOrElseThrow(patchFollowingDTO.actionUserUsername());
         User userToBeFollowedOrUnfollowed = this.findUserByUsernameOrElseThrow(patchFollowingDTO.usernameOfUserToBeFollowed());
 
@@ -209,11 +204,11 @@ public class UserService {
         userRepository.save(actionUser);
         userRepository.save(userToBeFollowedOrUnfollowed);
 
-        return Response.fromString(response);
+        return new MessageResponse(response);
     }
 
     @Transactional
-    public Response deleteFollower(DeleteFollowerDTO deleteFollowerDTO) {
+    public MessageResponse deleteFollower(DeleteFollowerDTO deleteFollowerDTO) {
 
         System.out.println(deleteFollowerDTO);
 
@@ -227,11 +222,24 @@ public class UserService {
             userRepository.save(user);
             userRepository.save(followerToBeRemoved);
 
-            return Response.fromString("O seguidor " + followerToBeRemoved.getUsername() + " foi removido");
+            return new MessageResponse("O seguidor " + followerToBeRemoved.getUsername() + " foi removido");
         } else {
             throw new NoSuchElementException("Seguidor não encontrado");
         }
 
+    }
+
+    public MessageResponse patchPassword(String username, PatchPasswordDTO patchPasswordDTO) {
+
+        this.userValidations.patchPassword(username, patchPasswordDTO);
+
+        User user = this.findUserByUsernameOrElseThrow(username);
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(patchPasswordDTO.newPassword());
+        user.setPassword(encryptedPassword);
+        this.userRepository.save(user);
+
+        return new MessageResponse("Senha atualizada");
     }
 
     private User findUserByIdOrElseThrow(String userId) {

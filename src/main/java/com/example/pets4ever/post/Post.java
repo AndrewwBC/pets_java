@@ -39,11 +39,13 @@ public class Post {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinTable(
             name = "likes",
             joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<User> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", fetch=FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)

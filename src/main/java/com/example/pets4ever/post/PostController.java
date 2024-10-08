@@ -4,7 +4,8 @@ import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.DTO.UpdatePostToReceiveLikeDTO;
 import com.example.pets4ever.post.response.CreateResponse;
-import com.example.pets4ever.utils.GetUsernameFromToken;
+import com.example.pets4ever.user.responses.MessageResponse;
+import com.example.pets4ever.utils.GetIdFromToken;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,27 +16,26 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/post")
+@RequestMapping("/api/v1/post")
 public class PostController {
 
     @Autowired
     PostServices postServices;
     @Autowired
-    GetUsernameFromToken getUsernameFromToken;
+    GetIdFromToken getIdFromToken;
 
     @GetMapping("/{username}")
-    public ResponseEntity<List<PostResponseDTO>> index(@PathVariable String username){
+    public ResponseEntity<List<PostResponseDTO>> index(@PathVariable String username) {
         return ResponseEntity.ok().body(this.postServices.getAllPosts(username));
     }
 
-    //busca o post de acordo com o usuario para tratar likes etc
-    //fazer no futuro um apenas para post, sem depender de user
-//    @GetMapping("/{postId}")
-//    public ResponseEntity<PostResponseDTO> show(@PathVariable String postId, @RequestBody PostShowDTO postShowDTO){
-//        return ResponseEntity.ok().body(this.postServices.getPost(postId,postShowDTO.userId()));
-//    }
+    @GetMapping("/show/{postId}/{username}")
+    public ResponseEntity<PostResponseDTO> show(@PathVariable String postId, @PathVariable String username) {
+        System.out.println(postId + username);
+        return ResponseEntity.ok().body(this.postServices.getPost(postId, username));
+    }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<CreateResponse> create(@ModelAttribute @Valid PostDTO postDTO) throws IOException {
         System.out.println(postDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(postServices.create(postDTO));
@@ -56,4 +56,8 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(this.postServices.UpdatePostToReceiveLikesService(data.postId(), data.username()));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResponse> delete(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.postServices.delete(id));
+    }
 }

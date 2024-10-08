@@ -37,13 +37,11 @@ public class SecurityFilter extends OncePerRequestFilter {
             if(jwt != null) {
                 try {
                     String subject = tokenService.validateTokenAndGetUserId(jwt);
-                    System.out.println(subject);
-                    User user = userRepository.findByUsername(subject).orElseThrow();
+                    User user = userRepository.findById(subject).orElseThrow();
 
                     var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } catch (JWTVerificationException exception) {
-                    System.out.println(exception.getMessage());
                     myTokenExceptionHandler.handleTokenException(response);
                     return;
                 }

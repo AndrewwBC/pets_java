@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GetUsernameFromToken {
+public class GetIdFromToken {
 
     @Autowired
     TokenService tokenService;
-    public String recoverUsername(HttpServletRequest request) {
+    public String id(HttpServletRequest request) {
 
         String jwt = null;
 

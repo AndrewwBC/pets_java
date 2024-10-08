@@ -10,10 +10,12 @@ import com.example.pets4ever.post.response.CreateResponse;
 import com.example.pets4ever.post.validations.PostValidations;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
+import com.example.pets4ever.user.responses.MessageResponse;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,15 +47,14 @@ public class PostServices {
                 new NoSuchElementException("Usuário não encontrado!"));
 
 
-            String uniqueFilename = this.amazonClient.uploadFile(postDTO.file());
-            Post postToBeInserted = new Post(postDTO.description(), uniqueFilename, user);
+        String uniqueFilename = this.amazonClient.uploadFile(postDTO.file());
+        Post postToBeInserted = new Post(postDTO.description(), uniqueFilename, user);
 
-            Post createdPost = this.postRepository.save(postToBeInserted);
+        Post createdPost = this.postRepository.save(postToBeInserted);
         System.out.println(createdPost);
-            return new CreateResponse(createdPost.getCreationDate(), createdPost.getImageUrl());
-
-
+        return new CreateResponse(createdPost.getCreationDate(), createdPost.getImageUrl());
     }
+
     public List<PostResponseDTO> getAllPosts(String username) {
         List<Post> allPosts =  this.postRepository.findAllByOrderByCreationDateDesc();
 
@@ -62,13 +63,11 @@ public class PostServices {
 
         return allPosts.stream().map(post -> getPostResponseDTO(username, post)).toList();
     }
-    public PostResponseDTO getPost(String postId, String userId) {
-
+    public PostResponseDTO getPost(String postId, String username) {
         Post post = this.postRepository.findById(postId).orElseThrow(() ->
                 new NoSuchElementException("Erro ao capturar as postagens!"));
 
-        return getPostResponseDTO(userId, post);
-
+        return getPostResponseDTO(username, post);
     }
     public PostResponseDTO UpdatePostToReceiveLikesService(String postId, String username){
 
@@ -97,12 +96,19 @@ public class PostServices {
 
         List<CommentPostResponseDTO> commentPostResponseDTOS = new ArrayList<>();
         post.getComments().forEach(comment -> {
-            commentPostResponseDTOS.add(new CommentPostResponseDTO(comment.getUserId(), comment.getUser().getProfileImgUrl(), comment.getUser().getUsername(), comment.getComment()));
+            commentPostResponseDTOS.add(CommentPostResponseDTO.fromData(comment.getUser(), comment));
         });
 
         List<Like> listOflikes = post.getLikes().stream().map(Like::fromUser).toList();
 
         return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
+    }
+
+
+    @Transactional
+    public MessageResponse delete(String id){
+        this.postRepository.deleteById(id);
+        return new MessageResponse("Postagem deletada");
     }
 
 }

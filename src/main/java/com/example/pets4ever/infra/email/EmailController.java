@@ -11,14 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/api/v1/email")
 public class EmailController {
 
     @Autowired
     private EmailService emailService;
-
-
-
     @PostMapping("/send/{email}")
     public ResponseEntity<String> sendEmail(@PathVariable String email) {
 

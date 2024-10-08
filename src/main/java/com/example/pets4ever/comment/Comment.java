@@ -7,9 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -45,5 +43,14 @@ public class Comment {
 
     public String getUserId() {
         return this.user.getId();
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id='" + id + '\'' +
+                ", comment='" + comment + '\'' +
+                ", creationDate=" + creationDate +
+                '}';
     }
 }

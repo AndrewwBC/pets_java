@@ -1,13 +1,8 @@
 package com.example.pets4ever.user;
 
-import com.example.pets4ever.user.dtos.PatchProfileDTO;
-import com.example.pets4ever.user.dtos.ProfileImgDTO;
-import com.example.pets4ever.user.dtos.DeleteFollowerDTO;
-import com.example.pets4ever.user.dtos.PatchFollowingDTO;
-import com.example.pets4ever.user.dtos.SignInDTO;
-import com.example.pets4ever.user.dtos.UpdateEmailDTO;
+import com.example.pets4ever.user.dtos.*;
 import com.example.pets4ever.user.responses.*;
-import com.example.pets4ever.utils.GetUsernameFromToken;
+import com.example.pets4ever.utils.GetIdFromToken;
 import com.example.pets4ever.utils.MyCookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -29,15 +25,15 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    GetUsernameFromToken getUsernameFromToken;
+    GetIdFromToken getIdFromToken;
 
 
     @GetMapping("")
     public ResponseEntity<UserResponse> user(HttpServletRequest request) {
 
-        String username = getUsernameFromToken.recoverUsername(request);
+        String id = getIdFromToken.id(request);
 
-        UserResponse user = userService.userByUsername(username);
+        UserResponse user = userService.userById(id);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
@@ -49,8 +45,55 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        String jwt = null;
+        HttpHeaders headers = this.getHeadersWithExpiredCookies();
+        return ResponseEntity.ok().headers(headers).body("Sessão encerrada");
+    }
+    
+    @PostMapping
+    public ResponseEntity<Object> signup(@RequestBody @Valid SignUpDTO data) {
+        return ResponseEntity.ok(userService.create(data));
+    }
 
+    @PatchMapping("/email/{id}")
+    public ResponseEntity<MessageResponse> email(@PathVariable String id, @RequestBody @Valid UpdateEmailDTO updateEmailDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateEmail(updateEmailDTO, id));
+    }
+
+    @PatchMapping("/profile/{id}")
+    public ResponseEntity<List<FieldMessageResponse>> profile(@PathVariable String id, @RequestBody @Valid PatchProfileDTO patchProfileDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.patchProfile(id, patchProfileDTO));
+    }
+
+    @PatchMapping("/{id}/profile-img")
+    public ResponseEntity<FieldMessageResponse> profileImg(@PathVariable String id, @ModelAttribute ProfileImgDTO profileImgDTO) throws IOException {
+        System.out.println(profileImgDTO);
+        return ResponseEntity.ok(userService.patchProfileImg(profileImgDTO, id));
+    }
+
+    @PatchMapping("/following")
+    public ResponseEntity<MessageResponse> following(@RequestBody @Valid PatchFollowingDTO patchFollowingDTO){
+        System.out.println(patchFollowingDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(userService.patchFollowing(patchFollowingDTO));
+    }
+
+    @PatchMapping("/{username}/password")
+    public ResponseEntity<MessageResponse> password(@PathVariable String username, @RequestBody @Valid PatchPasswordDTO patchPasswordDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.patchPassword(username, patchPasswordDTO));
+    }
+
+    @DeleteMapping("/follower")
+    public ResponseEntity<MessageResponse> follower(@RequestBody @Valid DeleteFollowerDTO deleteFollowerDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.deleteFollower(deleteFollowerDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable String id){
+        HttpHeaders headers = this.getHeadersWithExpiredCookies();
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(userService.delete(id));
+    }
+
+    private HttpHeaders getHeadersWithExpiredCookies(){
+        String jwt = null;
         MyCookie myCookie = new MyCookie();
 
         ResponseCookie jwtCookie = myCookie.generateCookie("jwt", jwt, 0, true, true);
@@ -61,45 +104,7 @@ public class UserController {
         headers.add(HttpHeaders.SET_COOKIE, jwtCookie.toString());
         headers.add(HttpHeaders.SET_COOKIE, hasSession.toString());
 
-        return ResponseEntity.ok().headers(headers).body("Sessão encerrada");
-    }
-    
-    @PostMapping
-    public ResponseEntity<Object> signup(@RequestBody @Valid SignInDTO data) {
-        return ResponseEntity.ok(userService.create(data));
-    }
-
-    @PatchMapping("/email/{id}")
-    public ResponseEntity<UpdateEmailResponse> email(@PathVariable String id, @RequestBody @Valid UpdateEmailDTO updateEmailDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateEmail(updateEmailDTO, id));
-    }
-
-    @PatchMapping("/profile/{id}")
-    public ResponseEntity<Response> profile(@PathVariable String id, @RequestBody @Valid PatchProfileDTO patchProfileDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.patchProfile(id, patchProfileDTO));
-    }
-
-    @PatchMapping("/{id}/profile-img")
-    public ResponseEntity<Response> profileImg(@PathVariable String id, @ModelAttribute ProfileImgDTO profileImgDTO) throws IOException {
-        System.out.println(profileImgDTO);
-        return ResponseEntity.ok(userService.patchProfileImg(profileImgDTO, id));
-    }
-
-    @PatchMapping("/following")
-    public ResponseEntity<Response> following(@RequestBody @Valid PatchFollowingDTO patchFollowingDTO){
-        System.out.println("rota following");
-        System.out.println(patchFollowingDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(userService.patchFollowing(patchFollowingDTO));
-    }
-
-    @DeleteMapping("/follower")
-    public ResponseEntity<Response> follower(@RequestBody @Valid DeleteFollowerDTO deleteFollowerDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.deleteFollower(deleteFollowerDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.delete(id));
+        return headers;
     }
 }
 

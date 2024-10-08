@@ -25,7 +25,7 @@ public class TokenService {
         try {
             return JWT.create()
                     .withIssuer("auth-api")
-                    .withSubject(user.getUsername())
+                    .withSubject(user.getId())
                     .withIssuedAt(Instant.now()) // Gerado em
                     .withExpiresAt(Instant.now().plus(Duration.ofHours(24))) // Expirado em
                     .sign(algorithm);
