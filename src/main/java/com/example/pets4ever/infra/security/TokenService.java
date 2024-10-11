@@ -50,6 +50,4 @@ public class TokenService {
             throw new JWTVerificationException(exception.getMessage());
         }
     }
-
-
 }
