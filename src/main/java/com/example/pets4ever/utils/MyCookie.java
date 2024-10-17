@@ -10,7 +10,7 @@ public class MyCookie {
                 .secure(true) // Set true for production, HTTPS only
                 .sameSite("Lax")
                 .maxAge(age * 60 * 60)
-                .domain("pets4ever.site") // Set for production pets4ever.site
+                .domain(".localhost") // Set for production pets4ever.site
                 .path("/")
                 .build();
         return cookie;

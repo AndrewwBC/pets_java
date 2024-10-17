@@ -1,6 +1,7 @@
 package com.example.pets4ever.post;
 
 import com.example.pets4ever.post.DTO.PostDTO;
+import com.example.pets4ever.post.DTO.PostResponse.PatchDescription;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.DTO.UpdatePostToReceiveLikeDTO;
 import com.example.pets4ever.post.response.CreateResponse;
@@ -49,11 +50,16 @@ public class PostController {
 //
 //        return ResponseEntity.ok().body(newStorie);
 //    }
-
     @PatchMapping("/postlike")
     public ResponseEntity<PostResponseDTO> patchPostLike(@RequestBody UpdatePostToReceiveLikeDTO data) {
         System.out.println(data);
         return ResponseEntity.status(HttpStatus.OK).body(this.postServices.UpdatePostToReceiveLikesService(data.postId(), data.username()));
+    }
+
+    @PatchMapping("/description")
+    public ResponseEntity<MessageResponse> patchDescription(@RequestBody PatchDescription patchDescription) {
+        System.out.println(patchDescription);
+        return ResponseEntity.status(HttpStatus.OK).body(this.postServices.patchDescription(patchDescription));
     }
 
     @DeleteMapping("/{id}")

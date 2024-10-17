@@ -5,6 +5,7 @@ import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.infra.exceptions.post.WrongFileType;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
+import com.example.pets4ever.post.DTO.PostResponse.PatchDescription;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.response.CreateResponse;
 import com.example.pets4ever.post.validations.PostValidations;
@@ -89,6 +90,17 @@ public class PostServices {
 
     }
 
+    public MessageResponse patchDescription(PatchDescription patchDescription){
+
+        Post post = postRepository.findById(patchDescription.postId()).orElseThrow(() ->
+                new NoSuchElementException("Post não encontrado"));
+
+        post.setDescription(patchDescription.description());
+        postRepository.save(post);
+
+        return new MessageResponse("Descrição atualizada");
+    }
+
     @NotNull
     private PostResponseDTO getPostResponseDTO(String username, Post post) {
         boolean userLikedThisPost = post.getLikes().stream().anyMatch(like -> username.equals(like.getUsername()));
@@ -103,6 +115,7 @@ public class PostServices {
 
         return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
     }
+
 
 
     @Transactional
