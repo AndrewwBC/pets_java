@@ -9,7 +9,7 @@ public record SignInDTO(
         String email,
 
         @Pattern(
-                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$",
+                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@#$%^&+=!]{8,64}$",
                 message = "Senha incorreta!"
         )
         String password) {
