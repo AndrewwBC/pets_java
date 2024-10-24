@@ -16,9 +16,10 @@ public class SignUpDTO {
         @Email(message = "Email inválido!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
         String email;
         @Pattern(
-                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$",
-                message = "A senha deve ter de 8 a 64 caracteres, incluir uma letra maiúscula, minúscula e um número."
+                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d@#$%^&+=!]{8,64}$",
+                message = "A senha deve ter de 8 a 64 caracteres, incluir uma letra maiúscula, minúscula e um número. Caracteres especiais são opcionais."
         )
         String password;
+
 
 }
