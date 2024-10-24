@@ -2,6 +2,7 @@ package com.example.pets4ever.storie;
 
 
 import com.example.pets4ever.post.Post;
+import com.example.pets4ever.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,15 +12,18 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@DiscriminatorValue("isStorie")
+@DiscriminatorValue("STORIE")
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Storie extends Post {
     private Long views;
     private LocalDateTime expirationTime;
-    public Storie() {
-        super();
+    public Storie(String description, String imageUrl, User user) {
+        super(description, imageUrl, user);
+        this.views = 0L;
+        this.expirationTime = LocalDateTime.now().plusHours(24);
     }
 
     @Override

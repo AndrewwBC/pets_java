@@ -117,6 +117,18 @@
 			<version>4.4.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv-platform</artifactId>
+			<version>1.5.5</version> <!-- Use a versão mais recente disponível -->
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv</artifactId>
+			<version>1.5.5</version> <!-- Use a versão mais recente disponível -->
+		</dependency>
+
+
 		<!--Email-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -133,6 +145,12 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.techgnious</groupId>
+			<artifactId>IVCompressor</artifactId>
+			<version>2.0.0</version>
 		</dependency>
 
 		<dependency>
