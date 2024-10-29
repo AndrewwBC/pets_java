@@ -37,7 +37,7 @@ public class StorieService {
         List<Storie> Stories = this.postRepository.findAllStories();
 
         return Stories.stream().map((storie) ->
-                new StorieResponse(storie.getImageUrl(), storie.getUser().getProfileImgUrl(), storie.getUser().getUsername(), storie.getExpirationTime())).toList();
+                new StorieResponse(storie.getImageUrl(), storie.getUser().getProfileImgUrl(), storie.getUser().getUsername(), storie.getExpirationTime(), storie.getViews())).toList();
     }
     public String create(StorieDTO storieDTO){
         User user = this.userRepository.findById(storieDTO.userId()).orElseThrow(() ->

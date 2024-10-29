@@ -57,7 +57,7 @@ public class PostServices {
     }
 
     public List<PostResponseDTO> getAllPosts(String username) {
-        List<Post> allPosts =  this.postRepository.findAllByOrderByCreationDateDesc();
+        List<Post> allPosts =  this.postRepository.findAllNonStories();
 
         userRepository.findByUsername(username).orElseThrow(() ->
             new NoSuchElementException("Usuário não encontrado."));

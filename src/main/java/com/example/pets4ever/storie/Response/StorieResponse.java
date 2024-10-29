@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 
 public record StorieResponse(
         String fileUrl,
-        String userProfileImgUrl,
+        String profileImgUrl,
         String username,
-        LocalDateTime expiresAt
+        LocalDateTime expiresAt,
+        Long views
 )
 {}

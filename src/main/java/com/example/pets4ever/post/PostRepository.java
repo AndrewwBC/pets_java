@@ -11,9 +11,8 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, String> {
 
-    List<Post> findAllByOrderByCreationDateDesc();
-    List<Post> findAllByUserId(String userId);
-
+    @Query("SELECT p FROM Posts p WHERE TYPE(p) <> Storie ORDER BY p.creationDate DESC")
+    List<Post> findAllNonStories();
 
     @Query("SELECT s FROM Storie s")
     List<Storie> findAllStories();;
