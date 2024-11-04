@@ -71,14 +71,8 @@ public class VideoProcessor {
         customRes.setHeight(1080);
 
         IVAudioAttributes audioAttribute = new IVAudioAttributes();
-        audioAttribute.setBitRate(64000);
-        audioAttribute.setChannels(2);
-        audioAttribute.setSamplingRate(44100);
 
         IVVideoAttributes videoAttribute = new IVVideoAttributes();
-        videoAttribute.setBitRate(2700000);
-        videoAttribute.setFrameRate(30);
-        videoAttribute.setSize(customRes);
 
         byte[] videoOutput = compressor.
                 encodeVideoWithAttributes(file.getBytes(), VideoFormats.MP4, audioAttribute,videoAttribute);
