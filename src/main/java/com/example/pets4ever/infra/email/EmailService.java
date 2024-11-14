@@ -32,12 +32,7 @@ public class EmailService {
     }
 
     public String sendCodeToConfirmEmailUpdate(String email){
-
-        boolean emailAlreadyInUse =  userRepository.findByEmail(email).isPresent();
-
-        if(emailAlreadyInUse) {
-            throw new EmailAlreadyInUseException("Email já cadastrado.");
-        }
+        this.emailAlreadyInUse(email);
 
         String code = cacheService.storageCodeAndReturnIt();
         String emailText = "Este é o código " + code;
@@ -47,12 +42,7 @@ public class EmailService {
         return email;
     }
     public String sendNewCodeToConfirmEmailUpdate(String email){
-
-        boolean emailAlreadyInUse =  userRepository.findByEmail(email).isPresent();
-
-        if(emailAlreadyInUse) {
-            throw new EmailAlreadyInUseException("Email já cadastrado.");
-        }
+        this.emailAlreadyInUse(email);
 
         String code = cacheService.storageCodeAndReturnIt();
         String emailText = "Este é o código " + code;
@@ -62,6 +52,23 @@ public class EmailService {
         return email;
     }
 
+    public String sendEmailForgotPassword(String email){
+        this.emailAlreadyInUse(email);
+
+        String emailText = "<a href=\"http://localhost:5173/changepassword?id=123&code=abc\">Alterar Senha</a>";
+        this.sendSimpleMessage(email, "Esqueceu senha", emailText);
+
+        return email;
+    }
+
+    private void emailAlreadyInUse(String email){
+        boolean emailAlreadyInUse =  userRepository.findByEmail(email).isPresent();
+
+        if(emailAlreadyInUse) {
+            throw new EmailAlreadyInUseException("Email já cadastrado.");
+        }
+
+    }
 
 
 }

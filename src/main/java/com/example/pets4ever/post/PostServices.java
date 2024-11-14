@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PostServices {
@@ -115,12 +112,17 @@ public class PostServices {
 
         return PostResponseDTO.fromData(post, post.getUser(), userLikedThisPost, quantityOfLikes,listOflikes,commentPostResponseDTOS);
     }
-
-
-
+    
     @Transactional
     public MessageResponse delete(String id){
+
+        Post post = this.postRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Postagem não encontrada"));
+
         this.postRepository.deleteById(id);
+        System.out.println(post.getImageUrl());
+        this.amazonClient.deleteFileFromS3Bucket(post.getImageUrl());
+
         return new MessageResponse("Postagem deletada");
     }
 

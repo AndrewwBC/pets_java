@@ -1,6 +1,9 @@
 package com.example.pets4ever.user;
 
 
+import com.example.pets4ever.infra.email.Code.CacheService;
+import com.example.pets4ever.infra.email.Code.exceptions.ErrorMessage;
+import com.example.pets4ever.infra.email.Code.exceptions.InvalidCodeException;
 import com.example.pets4ever.infra.exceptions.user.PatchFollowingException;
 import com.example.pets4ever.infra.security.TokenService;
 import com.example.pets4ever.infra.aws.AmazonClient;
@@ -8,6 +11,7 @@ import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PostResponseDTO;
 import com.example.pets4ever.post.Post;
+import com.example.pets4ever.storie.Storie;
 import com.example.pets4ever.user.dtos.*;
 import com.example.pets4ever.user.dtos.profileDTO.FollowersData;
 import com.example.pets4ever.user.dtos.profileDTO.UserIdNameAndImageProps;
@@ -40,6 +44,9 @@ public class UserService {
     TokenService tokenService;
 
     @Autowired
+    CacheService cacheService;
+
+    @Autowired
     UserValidations userValidations;
 
     private final AmazonClient amazonClient;
@@ -54,8 +61,8 @@ public class UserService {
         return userData(user);
     }
 
-    public UserResponse userById(String username) {
-        User user = this.userRepository.findById(username).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+    public UserResponse userById(String userId) {
+        User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
         return userData(user);
     }
 
@@ -66,6 +73,8 @@ public class UserService {
         List<User> followers = user.getFollowedByUsers();
         List<User> following = user.getFollowingUsers();
         List<Post> userPosts = user.getPosts();
+
+        System.out.println(userPosts);
 
         List<UserIdNameAndImageProps> listOfUsersToFollowersData = followers.stream().map(followUser ->
                 new UserIdNameAndImageProps(followUser.getUsername(), followUser.getId(), followUser.getProfileImgUrl())
@@ -79,7 +88,7 @@ public class UserService {
 
         FollowingsData followingsData = new FollowingsData(listOfUsersToFollowingData, listOfUsersToFollowingData.size());
 
-        List<PostResponseDTO> postResponseDTOList = userPosts.stream().map(post -> {
+        List<PostResponseDTO> postResponseDTOList = userPosts.stream().filter(post -> !(post instanceof Storie)).map(post -> {
             List<CommentPostResponseDTO> commentPostResponseDTOS = post.getComments().stream().map(comment ->
                     CommentPostResponseDTO.fromData(comment.getUser(), comment)).collect(Collectors.toList());
 
@@ -236,6 +245,30 @@ public class UserService {
         User user = this.findUserByUsernameOrElseThrow(username);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(patchPasswordDTO.newPassword());
+        user.setPassword(encryptedPassword);
+        this.userRepository.save(user);
+
+        return new MessageResponse("Senha atualizada");
+    }
+
+    public MessageResponse forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+
+        String code = forgotPasswordDTO.code();
+        String username = forgotPasswordDTO.username();
+        String newPassword = forgotPasswordDTO.newPassword();
+
+        boolean isCodeValid = cacheService.isCodeValid(code);
+
+        if(isCodeValid) {
+            cacheService.removeCode(code);
+        } else {
+            ErrorMessage errorMessage = new ErrorMessage("Código inválido");
+            throw new InvalidCodeException(errorMessage);
+        }
+
+        User user = this.findUserByUsernameOrElseThrow(username);
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(newPassword);
         user.setPassword(encryptedPassword);
         this.userRepository.save(user);
 

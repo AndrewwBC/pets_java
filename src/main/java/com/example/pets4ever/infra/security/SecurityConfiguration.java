@@ -30,7 +30,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/signin").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/email/send/{email}").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/user/forgotpassword").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/email/send/forgotPassword/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

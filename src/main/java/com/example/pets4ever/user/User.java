@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    private LocalDateTime validFrom = LocalDateTime.now();
 
     @Length(min = 1, max = 128, message = "Nome completo deve ter de 3 a 128 caractéres")
     @NotEmpty(message = "Nome completo deve ser preenchido")

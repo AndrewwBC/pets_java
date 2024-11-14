@@ -18,18 +18,18 @@ public class EmailController {
     private EmailService emailService;
     @PostMapping("/send/{email}")
     public ResponseEntity<String> sendEmail(@PathVariable String email) {
-
-        System.out.println(email);
-
         emailService.sendSimpleMessage(email, "Assunto do Email", "Conteúdo do Email");
         return ResponseEntity.ok(email);
     }
-
+    @PostMapping("/send/forgotPassword/{email}")
+    public ResponseEntity<String> sendEmailForgotPassword(@PathVariable String email) {
+        System.out.println(email);
+        return ResponseEntity.status(HttpStatus.OK).body(emailService.sendEmailForgotPassword(email));
+    }
     @PostMapping("/send/updateEmailCode/{email}")
     public ResponseEntity<String> sendCodeToConfirmEmailUpdate(@PathVariable String email) {
        return ResponseEntity.status(HttpStatus.OK).body(emailService.sendCodeToConfirmEmailUpdate(email));
     }
-
     @PostMapping("/send/renewUpdateEmailCode/{email}")
     public ResponseEntity<String> sendNewCodeToConfirmEmailUpdate(@PathVariable String email) {
         return ResponseEntity.status(HttpStatus.OK).body(emailService.sendNewCodeToConfirmEmailUpdate(email));
