@@ -37,6 +37,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id", referencedColumnName = "id") // Mapeia somente ao campo "id"
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})

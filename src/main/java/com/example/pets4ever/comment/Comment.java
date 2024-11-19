@@ -27,7 +27,7 @@ public class Comment {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id") // Mapeia somente ao campo "id"
     private User user;
 
     @ManyToOne

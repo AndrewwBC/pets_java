@@ -14,8 +14,6 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
-
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -25,14 +23,12 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-@Validated
-@Getter
-@Setter
+@Getter @Setter
+
 public class User implements UserDetails {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
     private String id;
 
     private LocalDateTime validFrom = LocalDateTime.now();
@@ -75,7 +71,7 @@ public class User implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_following",
-            joinColumns = @JoinColumn(name = "users_id"),
+            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "following_id")
     )
     @OnDelete(action = OnDeleteAction.CASCADE)

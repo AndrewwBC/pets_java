@@ -43,7 +43,6 @@ public class AuthenticationController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         String jwt = tokenService.generateToken((User) auth.getPrincipal());
-        System.out.println(jwt);
 
         MyCookie myCookie = new MyCookie();
 
