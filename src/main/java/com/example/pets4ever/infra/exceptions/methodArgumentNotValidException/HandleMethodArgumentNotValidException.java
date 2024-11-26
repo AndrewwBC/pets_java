@@ -25,6 +25,6 @@ public class HandleMethodArgumentNotValidException {
                     return new MyArgumentNotValidExceptionResponseData(fieldName, error.getDefaultMessage());
         }).toList();
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(myArgumentNotValidExceptionResponseData);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(myArgumentNotValidExceptionResponseData);
     }
 }

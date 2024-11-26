@@ -15,7 +15,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,14 +23,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-
 public class User implements UserDetails {
 
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     private String id;
-
-    private LocalDateTime validFrom = LocalDateTime.now();
 
     @Length(min = 1, max = 128, message = "Nome completo deve ter de 3 a 128 caractéres")
     @NotEmpty(message = "Nome completo deve ser preenchido")

@@ -62,7 +62,8 @@ public class UserService {
     }
 
     public UserResponse userById(String userId) {
-        User user = this.userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+        User user = this.userRepository.findById(userId).orElseThrow(() ->
+                new NoSuchElementException("Usuário não encontrado"));
         return userData(user);
     }
 
