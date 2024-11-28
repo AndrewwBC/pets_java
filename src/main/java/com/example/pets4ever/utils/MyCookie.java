@@ -5,9 +5,6 @@ import org.springframework.http.ResponseCookie;
 
 public class MyCookie {
 
-    @Value("${COOKIE}")
-    private String COOKIE;
-
     public ResponseCookie generateCookie(String name, String value, Integer age, boolean httpOnly, boolean secure) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(httpOnly)
