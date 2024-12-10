@@ -14,6 +14,7 @@ import java.util.List;
 public record UserResponse (
         String username,
         String fullname,
+        String bio,
         String userId,
         String email,
         String profileImgUrl,
@@ -25,6 +26,7 @@ public record UserResponse (
         return new UserResponse(
                 user.getUsername(),
                 user.getFullname(),
+                user.getBio(),
                 user.getId(),
                 user.getEmail(),
                 user.getProfileImgUrl(),

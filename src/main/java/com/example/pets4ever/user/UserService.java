@@ -167,10 +167,13 @@ public class UserService {
 
     public List<FieldMessageResponse> patchProfile(String userId, PatchProfileDTO patchProfileDTO) {
 
-        this.userValidations.patchProfileValidate(patchProfileDTO);
-        List<FieldMessageResponse> response = new ArrayList<>();
-
         User user = this.findUserByIdOrElseThrow(userId);
+
+        if(!Objects.equals(patchProfileDTO.username(), user.getUsername())) {
+            this.userValidations.patchProfileValidate(patchProfileDTO);
+        }
+
+        List<FieldMessageResponse> response = new ArrayList<>();
 
         if(!Objects.equals(patchProfileDTO.fullname(), user.getFullname())) {
             response.add(FieldMessageResponse.fromData("fullname", user.getFullname(), "Atualizado"));
@@ -180,6 +183,7 @@ public class UserService {
             response.add(FieldMessageResponse.fromData("username", user.getUsername(), "Atualizado"));
         }
 
+        user.setBio(patchProfileDTO.bio());
         user.setUsername(patchProfileDTO.username());
         user.setFullname(patchProfileDTO.fullname());
         userRepository.save(user);

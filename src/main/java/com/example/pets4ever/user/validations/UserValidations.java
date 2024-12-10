@@ -65,10 +65,6 @@ public class UserValidations implements UserValidate{
     public void patchProfileValidate(PatchProfileDTO patchProfileDTO) {
         List<ErrorListDTO> errorList = new ArrayList<>();
 
-        if(existsByFullname(patchProfileDTO.fullname())) {
-            errorList.add(new ErrorListDTO("fullname", "Nome completo já cadastrado"));
-        }
-
         if(existsByUsername(patchProfileDTO.username())){
             errorList.add(new ErrorListDTO("username", "Nome de usuário já cadastrado"));
         }
