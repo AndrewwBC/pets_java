@@ -2,7 +2,6 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.infra.aws.AmazonClient;
 import com.example.pets4ever.comment.DTO.CommentPostResponseDTO;
-import com.example.pets4ever.infra.exceptions.post.WrongFileType;
 import com.example.pets4ever.post.DTO.PostDTO;
 import com.example.pets4ever.post.DTO.PostResponse.Like;
 import com.example.pets4ever.post.DTO.PostResponse.PatchDescription;
@@ -12,7 +11,6 @@ import com.example.pets4ever.post.validations.PostValidations;
 import com.example.pets4ever.user.User;
 import com.example.pets4ever.user.UserRepository;
 import com.example.pets4ever.user.responses.MessageResponse;
-import jakarta.persistence.PersistenceException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,7 +52,7 @@ public class PostServices {
     }
 
     public List<PostResponseDTO> getAllPosts(String username) {
-        List<Post> allPosts =  this.postRepository.findAllNonStories();
+        List<Post> allPosts =  this.postRepository.findAllNotStories();
 
         userRepository.findByUsername(username).orElseThrow(() ->
             new NoSuchElementException("Usuário não encontrado."));

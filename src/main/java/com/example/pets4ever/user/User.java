@@ -51,6 +51,8 @@ public class User implements UserDetails {
 
     private String profileImgUrl;
 
+    private Object sysPeriod;
+
     private UserRole role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)

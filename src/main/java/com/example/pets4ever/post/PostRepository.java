@@ -7,13 +7,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query("SELECT p FROM Posts p WHERE TYPE(p) <> Storie ORDER BY p.creationDate DESC")
-    List<Post> findAllNonStories();
+    List<Post> findAllNotStories();
 
     @Query("SELECT s FROM Storie s")
     List<Storie> findAllStories();;

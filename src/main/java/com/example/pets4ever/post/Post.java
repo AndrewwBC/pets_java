@@ -2,7 +2,6 @@ package com.example.pets4ever.post;
 
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
