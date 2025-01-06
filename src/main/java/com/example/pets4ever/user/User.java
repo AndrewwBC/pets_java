@@ -4,17 +4,21 @@ package com.example.pets4ever.user;
 import com.example.pets4ever.comment.Comment;
 import com.example.pets4ever.post.Post;
 import com.example.pets4ever.user.enums.UserRole;
+import com.vladmihalcea.hibernate.type.range.Range;
+import io.hypersistence.utils.hibernate.type.range.PostgreSQLRangeType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,7 +55,9 @@ public class User implements UserDetails {
 
     private String profileImgUrl;
 
-    private Object sysPeriod;
+    @Type(PostgreSQLRangeType.class)
+    @Column(name = "sys_period", columnDefinition = "tstzrange")
+    private Range<LocalDateTime> sysPeriod;
 
     private UserRole role;
 
@@ -79,9 +85,10 @@ public class User implements UserDetails {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<User> followedByUsers;
 
-    public User(String fullname, String username, String email, String password, UserRole role) {
+    public User(String fullname,String username, String email, String password, UserRole role) {
         this.username = username;
         this.fullname = fullname;
+        this.bio = "Numa boa com o meu pet!";
         this.email = email;
         this.password = password;
         this.role = role;

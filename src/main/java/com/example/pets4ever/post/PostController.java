@@ -42,14 +42,6 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(postServices.create(postDTO));
     }
 
-//    @PostMapping("/createStorie")
-//    public ResponseEntity<Post> createStorie(@ModelAttribute PostDTO postDTO, @RequestHeader("Authorization") String bearerToken) {
-//        String userId = getUserIdFromToken.recoverUserId(bearerToken);
-//
-//        Post newStorie = postServices.create(postDTO, userId);
-//
-//        return ResponseEntity.ok().body(newStorie);
-//    }
     @PatchMapping("/postlike")
     public ResponseEntity<PostResponseDTO> patchPostLike(@RequestBody UpdatePostToReceiveLikeDTO data) {
         System.out.println(data);

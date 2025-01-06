@@ -119,6 +119,7 @@ public class UserService {
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(signupDTO.getPassword());
+
         User newUser = new User(signupDTO.getFullname(), signupDTO.getUsername(), signupDTO.getEmail(), encryptedPassword, userRole);
 
         userRepository.save(newUser);

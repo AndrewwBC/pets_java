@@ -20,6 +20,4 @@ public class SignUpDTO {
                 message = "A senha deve ter de 8 a 64 caracteres, incluir uma letra maiúscula, minúscula e um número. Caracteres especiais são opcionais."
         )
         String password;
-
-
 }
