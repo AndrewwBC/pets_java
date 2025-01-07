@@ -13,11 +13,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "users_history")
-@Data
-@Setter
 @Getter
 public class UserHistory {
 
@@ -27,7 +26,7 @@ public class UserHistory {
     @Id
     @Type(PostgreSQLRangeType.class)
     @Column(name = "sys_period", columnDefinition = "tstzrange")
-    private Range<LocalDateTime> sysPeriod;
+    private Range<ZonedDateTime> sysPeriod;
 
     @Column(name = "role")
     private Short role;
@@ -44,6 +43,8 @@ public class UserHistory {
     @Column(name = "bio")
     @Length(max = 128, message = "No máximo 128 caractéres")
     private String bio;
+
+    private Long likes;
 
     @Column(name = "fullname")
     @Length(min = 1, max = 128, message = "Nome completo deve ter de 3 a 128 caractéres")

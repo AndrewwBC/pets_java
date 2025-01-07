@@ -1,7 +1,5 @@
 package com.example.pets4ever.user.validations;
 
-
-import com.example.pets4ever.infra.exceptions.methodArgumentNotValidException.MyArgumentNotValidExceptionResponseData;
 import com.example.pets4ever.infra.exceptions.user.dto.ErrorListDTO;
 import com.example.pets4ever.infra.exceptions.user.validation.SigninException;
 import com.example.pets4ever.infra.exceptions.user.validation.UserValidationsException;
@@ -11,7 +9,6 @@ import com.example.pets4ever.user.dtos.PatchPasswordDTO;
 import com.example.pets4ever.user.dtos.PatchProfileDTO;
 import com.example.pets4ever.user.dtos.SignUpDTO;
 import com.example.pets4ever.user.dtos.SignInDTO;
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -48,8 +45,11 @@ public class UserValidations implements UserValidate{
     @Override
     public void signInValidate(SignInDTO signInDTO) {
 
+        System.out.println("antes");
         User user = this.userRepository.findByEmail(signInDTO.email()).orElseThrow(()
                 -> new SigninException("Email ou senha incorretos."));
+
+        System.out.println(user);
 
         String cryptedPassword = user.getPassword();
         String loginPassword = signInDTO.password();

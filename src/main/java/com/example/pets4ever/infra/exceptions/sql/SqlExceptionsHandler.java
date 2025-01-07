@@ -20,7 +20,7 @@ public class SqlExceptionsHandler {
     @ExceptionHandler(PersistenceException.class)
     public ResponseEntity<?> handlePersistenceException(PersistenceException persistenceException) {
         Throwable cause = persistenceException.getCause();
-        System.out.println(persistenceException);
+        System.out.println(cause);
 
         if(cause instanceof ConstraintViolationException constraintViolationException) {
             List<ErrorListDTO> response = constraintViolationException.getConstraintViolations().stream().map((error)

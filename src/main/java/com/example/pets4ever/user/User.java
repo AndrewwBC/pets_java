@@ -18,7 +18,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,9 +58,9 @@ public class User implements UserDetails {
 
     private String profileImgUrl;
 
-    @Type(PostgreSQLRangeType.class)
-    @Column(name = "sys_period", columnDefinition = "tstzrange")
-    private Range<LocalDateTime> sysPeriod;
+//    @Type(PostgreSQLRangeType.class)
+//    @Column(name = "sys_period", columnDefinition = "tstzrange", insertable = false, updatable = false)
+//    private Range<ZonedDateTime> sysPeriod;
 
     private UserRole role;
 
