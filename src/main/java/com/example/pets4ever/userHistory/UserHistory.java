@@ -21,9 +21,6 @@ import java.time.ZonedDateTime;
 public class UserHistory {
 
     @Id
-    private String userId;
-
-    @Id
     @Type(PostgreSQLRangeType.class)
     @Column(name = "sys_period", columnDefinition = "tstzrange")
     private Range<ZonedDateTime> sysPeriod;
@@ -43,8 +40,6 @@ public class UserHistory {
     @Column(name = "bio")
     @Length(max = 128, message = "No máximo 128 caractéres")
     private String bio;
-
-    private Long likes;
 
     @Column(name = "fullname")
     @Length(min = 1, max = 128, message = "Nome completo deve ter de 3 a 128 caractéres")
