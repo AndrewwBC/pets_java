@@ -46,8 +46,10 @@ public class AuthenticationController {
 
         MyCookie myCookie = new MyCookie();
 
-        ResponseCookie jwtCookie = myCookie.generateCookie("jwt", jwt, 24, true, true);
-        ResponseCookie hasSession = myCookie.generateCookie("hasSession", "yes", 24, false, false);
+        ResponseCookie jwtCookie = myCookie.
+                generateCookie("jwt", jwt, 24, true, true);
+        ResponseCookie hasSession = myCookie.
+                generateCookie("hasSession", "yes", 24, false, false);
 
         HttpHeaders headers = new HttpHeaders();
 

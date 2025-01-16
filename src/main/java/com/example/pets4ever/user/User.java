@@ -36,6 +36,8 @@ public class User implements UserDetails {
     @Id
     private String id;
 
+    private String raca = "Vira-Lata!";
+
     @Length(min = 1, max = 128, message = "Nome completo deve ter de 3 a 128 caractéres")
     @NotEmpty(message = "Nome completo deve ser preenchido")
     private String fullname;

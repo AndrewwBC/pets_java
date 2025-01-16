@@ -13,10 +13,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query("SELECT p FROM Posts p WHERE TYPE(p) <> Storie ORDER BY p.creationDate DESC")
     List<Post> findAllNotStories();
-
     @Query("SELECT s FROM Storie s")
     List<Storie> findAllStories();;
-
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM Posts WHERE id = :id")
