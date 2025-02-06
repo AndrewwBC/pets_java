@@ -1,0 +1,67 @@
+name: Deploy to Oracle VM
+
+on:
+  push:
+    branches:
+      - feature_architecture
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Build JAR
+        run: ./mvnw clean package -DskipTests
+
+      - name: Verify JAR file
+        run: |
+          ls -lh ./target/pets4ever-0.0.1-SNAPSHOT.jar
+
+      - name: Setup SSH
+        env:
+          # MUDAR PARA SSH_GREEN QUANDO SUBIR NOVA FEATURE
+          # PADRÃO SSH_PRIVATE_KEY
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PORT: ${{ secrets.SSH_PORT }}
+          # MUDAR PARA GREEN_HOST
+          # PADRÃO SSH_HOST
+          HOST: ${{ secrets.SSH_HOST}}
+          USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p $PORT $HOST >> ~/.ssh/known_hosts
+
+      - name: SCP to Oracle VM
+        env:
+          PORT: ${{ secrets.SSH_PORT }}
+          # MUDAR PARA GREEN_HOST QUANDO SUBIR NOVA FEATURE
+          # PADRÃO SSH_HOST
+          HOST: ${{ secrets.SSH_HOST }}
+          USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          scp -i ~/.ssh/id_rsa -P $PORT ./target/pets4ever-0.0.1-SNAPSHOT.jar $USERNAME@$HOST:/home/$USERNAME/workflow/
+      - name: Restart Spring Boot Application
+        env:
+            PORT: ${{ secrets.SSH_PORT }}
+          # MUDAR PARA GREEN_HOST QUANDO SUBIR NOVA FEATURE
+          # PADRÃO SSH_HOST
+            HOST: ${{ secrets.SSH_HOST }}
+            USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          ssh -i ~/.ssh/id_rsa $USERNAME@$HOST << 'EOF'
+            sudo pkill -f 'java' || true
+            cd workflow/
+            nohup sudo java -jar pets4ever-0.0.1-SNAPSHOT.jar --spring.config.location=file:application.properties > app.log 2>&1 &
+          EOF
+        
